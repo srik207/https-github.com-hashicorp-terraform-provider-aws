@@ -379,52 +379,7 @@ func resourceAwsCognitoUserPool() *schema.Resource {
 				Optional: true,
 				MinItems: 1,
 				MaxItems: 50,
-				Set: func(v interface{}) int {
-					var buf bytes.Buffer
-					m := v.(map[string]interface{})
-					buf.WriteString(fmt.Sprintf("%s-", m["name"].(string)))
-					buf.WriteString(fmt.Sprintf("%s-", m["attribute_data_type"].(string)))
-					buf.WriteString(fmt.Sprintf("%t-", m["developer_only_attribute"].(bool)))
-					buf.WriteString(fmt.Sprintf("%t-", m["mutable"].(bool)))
-					buf.WriteString(fmt.Sprintf("%t-", m["required"].(bool)))
-
-					if v, ok := m["string_attribute_constraints"]; ok {
-						data := v.([]interface{})
-
-						if len(data) > 0 {
-							buf.WriteString("string_attribute_constraints-")
-							m, _ := data[0].(map[string]interface{})
-							if ok {
-								if l, ok := m["min_length"]; ok && l.(string) != "" {
-									buf.WriteString(fmt.Sprintf("%s-", l.(string)))
-								}
-
-								if l, ok := m["max_length"]; ok && l.(string) != "" {
-									buf.WriteString(fmt.Sprintf("%s-", l.(string)))
-								}
-							}
-						}
-					}
-
-					if v, ok := m["number_attribute_constraints"]; ok {
-						data := v.([]interface{})
-
-						if len(data) > 0 {
-							buf.WriteString("number_attribute_constraints-")
-							m, _ := data[0].(map[string]interface{})
-							if ok {
-								if l, ok := m["min_value"]; ok && l.(string) != "" {
-									buf.WriteString(fmt.Sprintf("%s-", l.(string)))
-								}
-
-								if l, ok := m["max_value"]; ok && l.(string) != "" {
-									buf.WriteString(fmt.Sprintf("%s-", l.(string)))
-								}
-							}
-						}
-					}
-					return hashcode.String(buf.String())
-				},
+				Set:      resourceAwsCognitoUserPoolSchemaHash,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"attribute_data_type": {
@@ -624,6 +579,53 @@ func resourceAwsCognitoUserPool() *schema.Resource {
 
 		CustomizeDiff: SetTagsDiff,
 	}
+}
+
+func resourceAwsCognitoUserPoolSchemaHash(v interface{}) int {
+	var buf bytes.Buffer
+	m := v.(map[string]interface{})
+	buf.WriteString(fmt.Sprintf("%s-", m["name"].(string)))
+	buf.WriteString(fmt.Sprintf("%s-", m["attribute_data_type"].(string)))
+	buf.WriteString(fmt.Sprintf("%t-", m["developer_only_attribute"].(bool)))
+	buf.WriteString(fmt.Sprintf("%t-", m["mutable"].(bool)))
+	buf.WriteString(fmt.Sprintf("%t-", m["required"].(bool)))
+
+	if v, ok := m["string_attribute_constraints"]; ok {
+		data := v.([]interface{})
+
+		if len(data) > 0 {
+			buf.WriteString("string_attribute_constraints-")
+			m, _ := data[0].(map[string]interface{})
+			if ok {
+				if l, ok := m["min_length"]; ok && l.(string) != "" {
+					buf.WriteString(fmt.Sprintf("%s-", l.(string)))
+				}
+
+				if l, ok := m["max_length"]; ok && l.(string) != "" {
+					buf.WriteString(fmt.Sprintf("%s-", l.(string)))
+				}
+			}
+		}
+	}
+
+	if v, ok := m["number_attribute_constraints"]; ok {
+		data := v.([]interface{})
+
+		if len(data) > 0 {
+			buf.WriteString("number_attribute_constraints-")
+			m, _ := data[0].(map[string]interface{})
+			if ok {
+				if l, ok := m["min_value"]; ok && l.(string) != "" {
+					buf.WriteString(fmt.Sprintf("%s-", l.(string)))
+				}
+
+				if l, ok := m["max_value"]; ok && l.(string) != "" {
+					buf.WriteString(fmt.Sprintf("%s-", l.(string)))
+				}
+			}
+		}
+	}
+	return hashcode.String(buf.String())
 }
 
 func resourceAwsCognitoUserPoolCreate(d *schema.ResourceData, meta interface{}) error {
