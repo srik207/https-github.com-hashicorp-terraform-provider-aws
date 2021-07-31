@@ -1198,7 +1198,7 @@ func TestAccAWSCognitoUserPool_schemaAttributes(t *testing.T) {
 						"number_attribute_constraints.#": "0",
 						"string_attribute_constraints.#": "1",
 					}), resource.TestCheckTypeSetElemNestedAttrs(resourceName, "schema.*", map[string]string{
-						"attribute_data_type":            "String",
+						"attribute_data_type":            "Number",
 						"developer_only_attribute":       "false",
 						"mutable":                        "true",
 						"name":                           "numattr",
@@ -1243,7 +1243,7 @@ func TestAccAWSCognitoUserPool_schemaAttributes(t *testing.T) {
 						"number_attribute_constraints.#": "0",
 						"string_attribute_constraints.#": "1",
 					}), resource.TestCheckTypeSetElemNestedAttrs(resourceName, "schema.*", map[string]string{
-						"attribute_data_type":            "String",
+						"attribute_data_type":            "Number",
 						"developer_only_attribute":       "false",
 						"mutable":                        "true",
 						"name":                           "numattr",
