@@ -1177,7 +1177,7 @@ func TestAccAWSCognitoUserPool_schemaAttributes(t *testing.T) {
 				Config: testAccAWSCognitoUserPoolConfig_withSchemaAttributes(rName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccCheckAWSCognitoUserPoolExists(resourceName, &pool1),
-					resource.TestCheckResourceAttr(resourceName, "schema.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "schema.#", "3"),
 					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "schema.*", map[string]string{
 						"attribute_data_type":            "String",
 						"developer_only_attribute":       "false",
@@ -1188,6 +1188,15 @@ func TestAccAWSCognitoUserPool_schemaAttributes(t *testing.T) {
 						"string_attribute_constraints.#": "1",
 						"string_attribute_constraints.0.min_length": "5",
 						"string_attribute_constraints.0.max_length": "10",
+					}),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "schema.*", map[string]string{
+						"attribute_data_type":            "String",
+						"developer_only_attribute":       "false",
+						"mutable":                        "true",
+						"name":                           "alias",
+						"required":                       "false",
+						"number_attribute_constraints.#": "0",
+						"string_attribute_constraints.#": "1",
 					}),
 					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "schema.*", map[string]string{
 						"attribute_data_type":            "Boolean",
@@ -1205,7 +1214,7 @@ func TestAccAWSCognitoUserPool_schemaAttributes(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccCheckAWSCognitoUserPoolExists(resourceName, &pool2),
 					testAccCheckAWSCognitoUserPoolNotRecreated(&pool1, &pool2),
-					resource.TestCheckResourceAttr(resourceName, "schema.#", "3"),
+					resource.TestCheckResourceAttr(resourceName, "schema.#", "4"),
 					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "schema.*", map[string]string{
 						"attribute_data_type":            "String",
 						"developer_only_attribute":       "false",
@@ -1216,6 +1225,15 @@ func TestAccAWSCognitoUserPool_schemaAttributes(t *testing.T) {
 						"string_attribute_constraints.#": "1",
 						"string_attribute_constraints.0.min_length": "5",
 						"string_attribute_constraints.0.max_length": "10",
+					}),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "schema.*", map[string]string{
+						"attribute_data_type":            "String",
+						"developer_only_attribute":       "false",
+						"mutable":                        "true",
+						"name":                           "alias",
+						"required":                       "false",
+						"number_attribute_constraints.#": "0",
+						"string_attribute_constraints.#": "1",
 					}),
 					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "schema.*", map[string]string{
 						"attribute_data_type":            "Boolean",
@@ -2200,6 +2218,16 @@ resource "aws_cognito_user_pool" "test" {
   }
 
   schema {
+    attribute_data_type      = "String"
+    developer_only_attribute = false
+    mutable                  = true
+    name                     = "alias"
+    required                 = false
+
+    string_attribute_constraints {}
+  }
+
+  schema {
     attribute_data_type      = "Boolean"
     developer_only_attribute = true
     mutable                  = false
@@ -2226,6 +2254,16 @@ resource "aws_cognito_user_pool" "test" {
       min_length = 5
       max_length = 10
     }
+  }
+
+  schema {
+    attribute_data_type      = "String"
+    developer_only_attribute = false
+    mutable                  = true
+    name                     = "alias"
+    required                 = false
+
+    string_attribute_constraints {}
   }
 
   schema {
