@@ -664,6 +664,7 @@ func Provider() *schema.Provider {
 			"aws_connect_instance":                                    resourceAwsConnectInstance(),
 			"aws_cur_report_definition":                               resourceAwsCurReportDefinition(),
 			"aws_customer_gateway":                                    resourceAwsCustomerGateway(),
+			"aws_custom_resource":                                     resourceAwsCustomResource(),
 			"aws_datapipeline_pipeline":                               resourceAwsDataPipelinePipeline(),
 			"aws_datasync_agent":                                      resourceAwsDataSyncAgent(),
 			"aws_datasync_location_efs":                               resourceAwsDataSyncLocationEfs(),
