@@ -199,6 +199,14 @@ func Provider() *schema.Provider {
 				Description: "The access key for API operations. You can retrieve this\n" +
 					"from the 'Security & Credentials' section of the AWS console.",
 			},
+			"acm_private_key_passphrase": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "",
+				DefaultFunc: schema.EnvDefaultFunc("AWS_ACM_PRIVATE_KEY_PASSPHRASE", ""),
+				Description: "The passphrase used to decrypt PEM-encrypted private keys without storing them decrypted.\n" +
+					"Can also be configured using the `AWS_ACM_PRIVATE_KEY_PASSPHRASE` environment variable.",
+			},
 			"allowed_account_ids": {
 				Type:          schema.TypeSet,
 				Elem:          &schema.Schema{Type: schema.TypeString},
@@ -2073,6 +2081,7 @@ func Provider() *schema.Provider {
 func providerConfigure(ctx context.Context, d *schema.ResourceData, terraformVersion string) (interface{}, diag.Diagnostics) {
 	config := conns.Config{
 		AccessKey:                      d.Get("access_key").(string),
+		ACMPrivateKeyPassphrase:        d.Get("acm_private_key_passphrase").(string),
 		DefaultTagsConfig:              expandProviderDefaultTags(d.Get("default_tags").([]interface{})),
 		CustomCABundle:                 d.Get("custom_ca_bundle").(string),
 		EC2MetadataServiceEndpoint:     d.Get("ec2_metadata_service_endpoint").(string),

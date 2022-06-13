@@ -310,6 +310,7 @@ import (
 
 type AWSClient struct {
 	AccountID                 string
+	ACMPrivateKeyPassphrase   string
 	DefaultTagsConfig         *tftags.DefaultConfig
 	DNSSuffix                 string
 	IgnoreTagsConfig          *tftags.IgnoreConfig
