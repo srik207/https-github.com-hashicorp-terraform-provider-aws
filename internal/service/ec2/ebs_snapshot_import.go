@@ -193,7 +193,7 @@ func resourceEBSSnapshotImportCreate(d *schema.ResourceData, meta interface{}) e
 	}
 
 	if v, ok := d.GetOk("client_data"); ok && len(v.([]interface{})) > 0 && v.([]interface{})[0] != nil {
-		input.ClientData = expandClientData(v.([]interface{})[0].(map[string]interface{}))
+		input.ClientData = ExpandClientData(v.([]interface{})[0].(map[string]interface{}))
 	}
 
 	if v, ok := d.GetOk("description"); ok {
@@ -308,36 +308,6 @@ func resourceEBSSnapshotImportRead(d *schema.ResourceData, meta interface{}) err
 	return nil
 }
 
-func expandClientData(tfMap map[string]interface{}) *ec2.ClientData {
-	if tfMap == nil {
-		return nil
-	}
-
-	apiObject := &ec2.ClientData{}
-
-	if v, ok := tfMap["comment"].(string); ok && v != "" {
-		apiObject.Comment = aws.String(v)
-	}
-
-	if v, ok := tfMap["upload_end"].(string); ok && v != "" {
-		v, _ := time.Parse(time.RFC3339, v)
-
-		apiObject.UploadEnd = aws.Time(v)
-	}
-
-	if v, ok := tfMap["upload_size"].(float64); ok && v != 0.0 {
-		apiObject.UploadSize = aws.Float64(v)
-	}
-
-	if v, ok := tfMap["upload_start"].(string); ok {
-		v, _ := time.Parse(time.RFC3339, v)
-
-		apiObject.UploadStart = aws.Time(v)
-	}
-
-	return apiObject
-}
-
 func expandSnapshotDiskContainer(tfMap map[string]interface{}) *ec2.SnapshotDiskContainer {
 	if tfMap == nil {
 		return nil
@@ -358,25 +328,7 @@ func expandSnapshotDiskContainer(tfMap map[string]interface{}) *ec2.SnapshotDisk
 	}
 
 	if v, ok := tfMap["user_bucket"].([]interface{}); ok && len(v) > 0 && v[0] != nil {
-		apiObject.UserBucket = expandUserBucket(v[0].(map[string]interface{}))
-	}
-
-	return apiObject
-}
-
-func expandUserBucket(tfMap map[string]interface{}) *ec2.UserBucket {
-	if tfMap == nil {
-		return nil
-	}
-
-	apiObject := &ec2.UserBucket{}
-
-	if v, ok := tfMap["s3_bucket"].(string); ok && v != "" {
-		apiObject.S3Bucket = aws.String(v)
-	}
-
-	if v, ok := tfMap["s3_key"].(string); ok && v != "" {
-		apiObject.S3Key = aws.String(v)
+		apiObject.UserBucket = ExpandUserBucket(v[0].(map[string]interface{}))
 	}
 
 	return apiObject

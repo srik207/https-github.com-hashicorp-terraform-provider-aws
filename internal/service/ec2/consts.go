@@ -56,6 +56,7 @@ const (
 )
 
 // See https://docs.aws.amazon.com/vm-import/latest/userguide/vmimport-image-import.html#check-import-task-status
+// TODO: Note: These may be mistakenly used for Snapshot image import. The only documented states are active and completed.
 const (
 	EBSSnapshotImportStateActive     = "active"
 	EBSSnapshotImportStateDeleting   = "deleting"
@@ -65,6 +66,18 @@ const (
 	EBSSnapshotImportStateValidated  = "validated"
 	EBSSnapshotImportStateConverting = "converting"
 	EBSSnapshotImportStateCompleted  = "completed"
+)
+
+// See https://docs.aws.amazon.com/vm-import/latest/userguide/vmimport-image-import.html#check-import-task-status
+const (
+	ImageImportStateActive     = "active"
+	ImageImportStateDeleting   = "deleting"
+	ImageImportStateDeleted    = "deleted"
+	ImageImportStateUpdating   = "updating"
+	ImageImportStateValidating = "validating"
+	ImageImportStateValidated  = "validated"
+	ImageImportStateConverting = "converting"
+	ImageImportStateCompleted  = "completed"
 )
 
 // See https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateNetworkInterface.html#API_CreateNetworkInterface_Example_2_Response.
