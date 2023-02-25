@@ -478,6 +478,7 @@ func New(ctx context.Context) (*schema.Provider, error) {
 
 			"aws_cloudwatch_event_bus":        events.DataSourceBus(),
 			"aws_cloudwatch_event_connection": events.DataSourceConnection(),
+			"aws_cloudwatch_event_rule":       events.DataSourceRule(),
 			"aws_cloudwatch_event_source":     events.DataSourceSource(),
 
 			"aws_codeartifact_authorization_token": codeartifact.DataSourceAuthorizationToken(),
