@@ -187,6 +187,7 @@ import (
 	"github.com/hashicorp/terraform-provider-aws/internal/service/wafregional"
 	"github.com/hashicorp/terraform-provider-aws/internal/service/wafv2"
 	"github.com/hashicorp/terraform-provider-aws/internal/service/worklink"
+	"github.com/hashicorp/terraform-provider-aws/internal/service/workmail"
 	"github.com/hashicorp/terraform-provider-aws/internal/service/workspaces"
 	"github.com/hashicorp/terraform-provider-aws/internal/service/xray"
 	tftags "github.com/hashicorp/terraform-provider-aws/internal/tags"
@@ -923,6 +924,8 @@ func New(ctx context.Context) (*schema.Provider, error) {
 			"aws_wafv2_regex_pattern_set": wafv2.DataSourceRegexPatternSet(),
 			"aws_wafv2_rule_group":        wafv2.DataSourceRuleGroup(),
 			"aws_wafv2_web_acl":           wafv2.DataSourceWebACL(),
+
+			"aws_workmail_organization": workmail.DataSourceOrganization(),
 
 			"aws_workspaces_bundle":    workspaces.DataSourceBundle(),
 			"aws_workspaces_directory": workspaces.DataSourceDirectory(),
@@ -2190,6 +2193,8 @@ func New(ctx context.Context) (*schema.Provider, error) {
 
 			"aws_worklink_fleet": worklink.ResourceFleet(),
 			"aws_worklink_website_certificate_authority_association": worklink.ResourceWebsiteCertificateAuthorityAssociation(),
+
+			"aws_workmail_organization": workmail.ResourceOrganization(),
 
 			"aws_workspaces_directory": workspaces.ResourceDirectory(),
 			"aws_workspaces_ip_group":  workspaces.ResourceIPGroup(),
