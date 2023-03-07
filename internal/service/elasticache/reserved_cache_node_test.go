@@ -91,7 +91,7 @@ func testAccReservedInstanceExists(ctx context.Context, n string, reservation *e
 func testAccReservedInstanceConfig_basic(rName string, cacheNodeCount string) string {
 	return fmt.Sprintf(`
 data "aws_elasticache_reserved_cache_node_offering" "test" {
-  cache_node_type     = "cache.t2.micro"
+  cache_node_type     = "cache.t4g.small"
   duration            = 31536000
   offering_type       = "No Upfront"
   product_description = "redis"
