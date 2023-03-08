@@ -13,6 +13,9 @@ on:
       - go.sum
       - 'internal/service/**/*_test.go'
 
+permissions:
+  contents: read
+
 jobs:
   terrafmt:
     runs-on: ubuntu-latest

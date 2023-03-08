@@ -16,6 +16,9 @@ env:
   SEMGREP_ENABLE_VERSION_CHECK: false
   COMMON_PARAMS: --error --quiet
 
+permissions:
+  contents: read
+
 jobs:
   semgrep:
     name: Code Quality Scan
