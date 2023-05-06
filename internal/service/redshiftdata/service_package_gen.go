@@ -29,12 +29,12 @@ func (p *servicePackage) SDKDataSources(ctx context.Context) []*types.ServicePac
 func (p *servicePackage) SDKResources(ctx context.Context) []*types.ServicePackageSDKResource {
 	return []*types.ServicePackageSDKResource{
 		{
-			Factory:  ResourceBatchStatement,
-			TypeName: "aws_redshiftdata_batch_statement",
+			Factory:  resourceStatement,
+			TypeName: "aws_redshiftdata_statement",
 		},
 		{
-			Factory:  ResourceStatement,
-			TypeName: "aws_redshiftdata_statement",
+			Factory:  resourceBatchStatement,
+			TypeName: "aws_redshiftdata_batch_statement",
 		},
 	}
 }
