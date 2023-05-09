@@ -373,7 +373,7 @@ argument should not be specified.
 * `custom_origin_config` - The [CloudFront custom origin](#custom-origin-config-arguments) configuration information. If an S3 origin is required, use `origin_access_control_id` or `s3_origin_config` instead.
 * `domain_name` (Required) - DNS domain name of either the S3 bucket, or web site of your custom origin.
 * `custom_header` (Optional) - One or more sub-resources with `name` and `value` parameters that specify header data that will be sent to the origin (multiples allowed).
-* `origin_access_control_id` (Optional) - Unique identifier of a [CloudFront origin access control][8] for this origin.
+* `origin_access_control_id` (Optional) - Unique identifier of a [CloudFront origin access control][5] for this origin.
 * `origin_id` (Required) - Unique identifier for the origin.
 * `origin_path` (Optional) - Optional element that causes CloudFront to request your content from a directory in your Amazon S3 bucket or your custom origin.
 * `origin_shield` - The [CloudFront Origin Shield](#origin-shield-arguments) configuration information. Using Origin Shield can help reduce the load on your origin. For more information, see [Using Origin Shield](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/origin-shield.html) in the Amazon CloudFront Developer Guide.
@@ -384,7 +384,7 @@ argument should not be specified.
 * `http_port` (Required) - HTTP port the custom origin listens on.
 * `https_port` (Required) - HTTPS port the custom origin listens on.
 * `origin_protocol_policy` (Required) - Origin protocol policy to apply to your origin. One of `http-only`, `https-only`, or `match-viewer`.
-* `origin_ssl_protocols` (Required) - SSL/TLS protocols that you want CloudFront to use when communicating with your origin over HTTPS. A list of one or more of `SSLv3`, `TLSv1`, `TLSv1.1`, and `TLSv1.2`.
+* `origin_ssl_protocols` (Optional) - SSL/TLS protocols that you want CloudFront to use when communicating with your origin over HTTPS. A list of one or more of `SSLv3`, `TLSv1`, `TLSv1.1`, and `TLSv1.2`. Defaults to `["TLSv1", "TLSv1.1", "TLSv1.2"]`.
 * `origin_keepalive_timeout` - (Optional) The Custom KeepAlive timeout, in seconds. By default, AWS enforces a limit of `60`. But you can request an [increase](http://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/RequestAndResponseBehaviorCustomOrigin.html#request-custom-request-timeout).
 * `origin_read_timeout` - (Optional) The Custom Read timeout, in seconds. By default, AWS enforces a limit of `60`. But you can request an [increase](http://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/RequestAndResponseBehaviorCustomOrigin.html#request-custom-request-timeout).
 
@@ -395,7 +395,7 @@ argument should not be specified.
 
 ##### S3 Origin Config Arguments
 
-* `origin_access_identity` (Required) - The [CloudFront origin access identity][5] to associate with the origin.
+* `origin_access_identity` (Required) - The [CloudFront origin access identity][3] to associate with the origin.
 
 #### Origin Group Arguments
 
@@ -453,14 +453,13 @@ In addition to all arguments above, the following attributes are exported:
 * `etag` - Current version of the distribution's information. For example: `E2QWRUHAPOMQZL`.
 * `hosted_zone_id` - CloudFront Route 53 zone ID that can be used to route an [Alias Resource Record Set][7] to. This attribute is simply an alias for the zone ID `Z2FDTNDATAQYW2`.
 
-[1]: http://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html
+[1]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html
 [2]: https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CreateDistribution.html
-[3]: http://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html
-[4]: http://www.iso.org/iso/country_codes/iso_3166_code_lists/country_names_and_code_elements.htm
-[5]: /docs/providers/aws/r/cloudfront_origin_access_identity.html
+[3]: /docs/providers/aws/r/cloudfront_origin_access_identity.html
+[4]: https://www.iso.org/iso-3166-country-codes.html
+[5]: /docs/providers/aws/r/cloudfront_origin_access_control.html
 [6]: https://aws.amazon.com/certificate-manager/
-[7]: http://docs.aws.amazon.com/Route53/latest/APIReference/CreateAliasRRSAPI.html
-[8]: /docs/providers/aws/r/cloudfront_origin_access_control.html
+[7]: https://docs.aws.amazon.com/Route53/latest/APIReference/API_ChangeResourceRecordSets.html
 
 ## Import
 
