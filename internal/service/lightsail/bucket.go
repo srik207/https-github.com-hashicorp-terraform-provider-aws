@@ -2,6 +2,7 @@ package lightsail
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -11,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-provider-aws/internal/conns"
 	"github.com/hashicorp/terraform-provider-aws/internal/create"
+	"github.com/hashicorp/terraform-provider-aws/internal/flex"
 	tftags "github.com/hashicorp/terraform-provider-aws/internal/tags"
 	"github.com/hashicorp/terraform-provider-aws/internal/tfresource"
 	"github.com/hashicorp/terraform-provider-aws/internal/verify"
@@ -52,8 +54,10 @@ func ResourceBucket() *schema.Resource {
 				ForceNew: true,
 			},
 			"region": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:             schema.TypeString,
+				Optional:         true,
+				ForceNew:         true,
+				DiffSuppressFunc: verify.RegionDiffSuppress,
 			},
 			"support_code": {
 				Type:     schema.TypeString,
@@ -71,7 +75,13 @@ func ResourceBucket() *schema.Resource {
 }
 
 func resourceBucketCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conn := meta.(*conns.AWSClient).LightsailConn()
+	region, err := flex.ExpandResourceRegion(d.Get("region"), meta.(*conns.ProviderMeta).AllowedRegions, meta.(*conns.ProviderMeta).Region)
+
+	if err != nil {
+		return create.DiagError(names.Lightsail, create.ErrActionExpandingResourceRegion, ResBucket, d.Get("name").(string), err)
+	}
+
+	conn := meta.(*conns.ProviderMeta).AWSClients[region].LightsailConn()
 
 	in := lightsail.CreateBucketInput{
 		BucketName: aws.String(d.Get("name").(string)),
@@ -85,31 +95,48 @@ func resourceBucketCreate(ctx context.Context, d *schema.ResourceData, meta inte
 		return create.DiagError(names.Lightsail, lightsail.OperationTypeCreateBucket, ResBucket, d.Get("name").(string), err)
 	}
 
-	id := d.Get("name").(string)
-	diag := expandOperations(ctx, conn, out.Operations, lightsail.OperationTypeCreateBucket, ResBucket, id)
+	diag := expandOperations(ctx, conn, out.Operations, lightsail.OperationTypeCreateBucket, ResBucket, d.Get("name").(string))
 
 	if diag != nil {
 		return diag
 	}
 
-	d.SetId(id)
+	d.SetId(d.Get("name").(string))
 
 	return resourceBucketRead(ctx, d, meta)
 }
 
 func resourceBucketRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conn := meta.(*conns.AWSClient).LightsailConn()
+	// To allow importing a resource that is not in the provider default region
+	// import using terraform import <bucket-name>,<region-name>
+	partCount := flex.ResourceIdPartCount(d.Id())
+	var id string
+	var region string
+	if partCount == 2 {
+		idParts := strings.Split(d.Id(), flex.ResourceIdSeparator)
+		region = idParts[1]
+		id = idParts[0]
+	} else {
+		if v, ok := d.GetOk("region"); ok {
+			region = v.(string)
+		} else {
+			region = meta.(*conns.ProviderMeta).Region
+		}
+		id = d.Id()
+	}
 
-	out, err := FindBucketById(ctx, conn, d.Id())
+	conn := meta.(*conns.ProviderMeta).AWSClients[region].LightsailConn()
+
+	out, err := FindBucketById(ctx, conn, id)
 
 	if !d.IsNewResource() && tfresource.NotFound(err) {
-		create.LogNotFoundRemoveState(names.CE, create.ErrActionReading, ResBucket, d.Id())
+		create.LogNotFoundRemoveState(names.Lightsail, create.ErrActionReading, ResBucket, d.Id())
 		d.SetId("")
 		return nil
 	}
 
 	if err != nil {
-		return create.DiagError(names.CE, create.ErrActionReading, ResBucket, d.Id(), err)
+		return create.DiagError(names.Lightsail, create.ErrActionReading, ResBucket, d.Id(), err)
 	}
 
 	d.Set("arn", out.Arn)
@@ -127,7 +154,13 @@ func resourceBucketRead(ctx context.Context, d *schema.ResourceData, meta interf
 }
 
 func resourceBucketUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conn := meta.(*conns.AWSClient).LightsailConn()
+	region, err := flex.ExpandResourceRegion(d.Get("region"), meta.(*conns.ProviderMeta).AllowedRegions, meta.(*conns.ProviderMeta).Region)
+
+	if err != nil {
+		return create.DiagError(names.Lightsail, create.ErrActionExpandingResourceRegion, ResBucket, d.Get("name").(string), err)
+	}
+
+	conn := meta.(*conns.ProviderMeta).AWSClients[region].LightsailConn()
 
 	if d.HasChange("bundle_id") {
 		in := lightsail.UpdateBucketBundleInput{
@@ -151,7 +184,14 @@ func resourceBucketUpdate(ctx context.Context, d *schema.ResourceData, meta inte
 }
 
 func resourceBucketDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conn := meta.(*conns.AWSClient).LightsailConn()
+	region, err := flex.ExpandResourceRegion(d.Get("region"), meta.(*conns.ProviderMeta).AllowedRegions, meta.(*conns.ProviderMeta).Region)
+
+	if err != nil {
+		return create.DiagError(names.Lightsail, create.ErrActionExpandingResourceRegion, ResBucket, d.Get("name").(string), err)
+	}
+
+	conn := meta.(*conns.ProviderMeta).AWSClients[region].LightsailConn()
+
 	out, err := conn.DeleteBucketWithContext(ctx, &lightsail.DeleteBucketInput{
 		BucketName: aws.String(d.Id()),
 	})
@@ -161,7 +201,7 @@ func resourceBucketDelete(ctx context.Context, d *schema.ResourceData, meta inte
 	}
 
 	if err != nil {
-		return create.DiagError(names.CE, create.ErrActionDeleting, ResBucket, d.Id(), err)
+		return create.DiagError(names.Lightsail, create.ErrActionDeleting, ResBucket, d.Id(), err)
 	}
 
 	diag := expandOperations(ctx, conn, out.Operations, lightsail.OperationTypeDeleteBucket, ResBucket, d.Id())

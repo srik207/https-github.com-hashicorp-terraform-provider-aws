@@ -1,6 +1,7 @@
 package flex
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 	"time"
@@ -239,5 +240,71 @@ func TestFlattenTimeStringList(t *testing.T) {
 
 	if !cmp.Equal(got, want) {
 		t.Errorf("expanded = %v, want = %v", got, want)
+	}
+}
+
+func TestExpandResourceRegion(t *testing.T) {
+	t.Parallel()
+
+	cases := []struct {
+		name           string
+		region         interface{}
+		defaultRegion  string
+		allowedRegions []string
+		expectedRegion string
+		expectedError  error
+	}{
+		{
+			name:           "resourceRegionPositive",
+			region:         "us-east-1",
+			defaultRegion:  "us-west-2",
+			allowedRegions: []string{"us-west-2", "us-east-1"},
+			expectedRegion: "us-east-1",
+			expectedError:  nil,
+		},
+		{
+			name:           "resourceRegionNilPositive",
+			region:         nil,
+			defaultRegion:  "us-west-2",
+			allowedRegions: []string{"us-west-2", "us-east-1"},
+			expectedRegion: "us-west-2",
+			expectedError:  nil,
+		},
+		{
+			name:           "resourceRegionNilNegative",
+			region:         nil,
+			defaultRegion:  "us-west-2",
+			allowedRegions: []string{"us-east-1"},
+			expectedRegion: "",
+			expectedError:  fmt.Errorf("provided resource region is not an allowed region in the provider configuration. To deploy to this region, add it to the 'allowed_regions' provider setting, or remove the list of 'allowed_regions' from your provider configuration. Provided region us-west-2, provider allowed regions: [us-east-1]"),
+		},
+		{
+			name:           "resourceRegionNegative",
+			region:         "us-east-1",
+			defaultRegion:  "us-west-2",
+			allowedRegions: []string{"us-west-2", "ap-south-1"},
+			expectedRegion: "",
+			expectedError:  fmt.Errorf("provided resource region is not an allowed region in the provider configuration. To deploy to this region, add it to the 'allowed_regions' provider setting, or remove the list of 'allowed_regions' from your provider configuration. Provided region us-east-1, provider allowed regions: [us-west-2 ap-south-1]"),
+		},
+	}
+
+	for _, tc := range cases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			out, err := ExpandResourceRegion(tc.region, tc.allowedRegions, tc.defaultRegion)
+
+			if tc.expectedError != nil {
+				if err != nil && !strings.Contains(err.Error(), tc.expectedError.Error()) {
+					t.Fatalf("expected = %s, want = %s", tc.expectedError.Error(), err.Error())
+				} else if err != nil && tc.expectedError == nil {
+					t.Errorf("unexpected error returned: %s", err)
+				}
+			}
+
+			if !cmp.Equal(out, tc.expectedRegion) {
+				t.Errorf("expanded = %s, want = %s", out, tc.expectedRegion)
+			}
+		})
 	}
 }

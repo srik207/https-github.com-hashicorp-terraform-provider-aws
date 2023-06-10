@@ -20,6 +20,7 @@ import (
 // schemaResourceData is an interface that implements functions from schema.ResourceData
 type schemaResourceData interface {
 	Get(key string) any
+	GetOk(key string) (interface{}, bool)
 	GetChange(key string) (any, any)
 	GetRawConfig() cty.Value
 	GetRawPlan() cty.Value
@@ -209,7 +210,7 @@ func (r tagsInterceptor) run(ctx context.Context, d schemaResourceData, meta any
 		return ctx, diags
 	}
 
-	sp, ok := meta.(*conns.AWSClient).ServicePackages[inContext.ServicePackageName]
+	sp, ok := meta.(*conns.ProviderMeta).ServicePackages[inContext.ServicePackageName]
 	if !ok {
 		return ctx, diags
 	}
@@ -244,6 +245,12 @@ func (r tagsInterceptor) run(ctx context.Context, d schemaResourceData, meta any
 				break
 			}
 
+			var region string
+			if v, ok := d.GetOk("region"); ok {
+				region = v.(string)
+			} else {
+				region = meta.(*conns.ProviderMeta).Region
+			}
 			if d.GetRawPlan().GetAttr("tags_all").IsWhollyKnown() {
 				if d.HasChange(names.AttrTagsAll) {
 					if identifierAttribute := r.tags.IdentifierAttribute; identifierAttribute != "" {
@@ -265,15 +272,15 @@ func (r tagsInterceptor) run(ctx context.Context, d schemaResourceData, meta any
 							if v, ok := sp.(interface {
 								UpdateTags(context.Context, any, string, any, any) error
 							}); ok {
-								err = v.UpdateTags(ctx, meta, identifier, o, n)
+								err = v.UpdateTags(ctx, meta.(*conns.ProviderMeta).AWSClients[region], identifier, o, n)
 							} else if v, ok := sp.(interface {
 								UpdateTags(context.Context, any, string, string, any, any) error
 							}); ok && r.tags.ResourceType != "" {
-								err = v.UpdateTags(ctx, meta, identifier, r.tags.ResourceType, o, n)
+								err = v.UpdateTags(ctx, meta.(*conns.ProviderMeta).AWSClients[region], identifier, r.tags.ResourceType, o, n)
 							}
 
 							// ISO partitions may not support tagging, giving error.
-							if errs.IsUnsupportedOperationInPartitionError(meta.(*conns.AWSClient).Partition, err) {
+							if errs.IsUnsupportedOperationInPartitionError(meta.(*conns.ProviderMeta).Partition, err) {
 								return ctx, diags
 							}
 
@@ -325,7 +332,7 @@ func (r tagsInterceptor) run(ctx context.Context, d schemaResourceData, meta any
 						}
 
 						// ISO partitions may not support tagging, giving error.
-						if errs.IsUnsupportedOperationInPartitionError(meta.(*conns.AWSClient).Partition, err) {
+						if errs.IsUnsupportedOperationInPartitionError(meta.(*conns.ProviderMeta).Partition, err) {
 							return ctx, diags
 						}
 

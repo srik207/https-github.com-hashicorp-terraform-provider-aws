@@ -21,8 +21,8 @@ import (
 // after resource READ operations as resource and provider-level tags
 // will be indistinguishable when returned from an AWS API.
 func SetTagsDiff(ctx context.Context, diff *schema.ResourceDiff, meta interface{}) error {
-	defaultTagsConfig := meta.(*conns.AWSClient).DefaultTagsConfig
-	ignoreTagsConfig := meta.(*conns.AWSClient).IgnoreTagsConfig
+	defaultTagsConfig := meta.(*conns.ProviderMeta).DefaultTagsConfig
+	ignoreTagsConfig := meta.(*conns.ProviderMeta).IgnoreTagsConfig
 
 	resourceTags := tftags.New(ctx, diff.Get("tags").(map[string]interface{}))
 
@@ -155,4 +155,10 @@ func DiffStringMaps(oldMap, newMap map[string]interface{}) (map[string]*string, 
 	}
 
 	return add, remove, unchanged
+}
+
+// RegionDiffSuppress handles configuration block attributes in the following scenario:
+//   - The resource schema includes an optional region field
+func RegionDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
+	return new == ""
 }

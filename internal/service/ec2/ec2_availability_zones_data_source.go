@@ -66,7 +66,7 @@ func DataSourceAvailabilityZones() *schema.Resource {
 
 func dataSourceAvailabilityZonesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	conn := meta.(*conns.AWSClient).EC2Conn()
+	conn := meta.(*conns.ProviderMeta).AWSClients[meta.(*conns.ProviderMeta).Region].EC2Conn()
 
 	log.Printf("[DEBUG] Reading Availability Zones.")
 
@@ -133,7 +133,7 @@ func dataSourceAvailabilityZonesRead(ctx context.Context, d *schema.ResourceData
 		zoneIds = append(zoneIds, zoneID)
 	}
 
-	d.SetId(meta.(*conns.AWSClient).Region)
+	d.SetId(meta.(*conns.ProviderMeta).AWSClients[meta.(*conns.ProviderMeta).Region].Region)
 
 	if err := d.Set("group_names", groupNames); err != nil {
 		return sdkdiag.AppendErrorf(diags, "setting group_names: %s", err)
