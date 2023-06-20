@@ -3873,8 +3873,6 @@ func TestAccEC2Instance_cpuOptionsAmdSevSnpCoreThreads(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.0.amd_sev_snp", ec2.AmdSevSnpSpecificationEnabled),
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.0.core_count", strconv.Itoa(originalCoreCount)),
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.0.threads_per_core", strconv.Itoa(originalThreadsPerCore)),
-					resource.TestCheckResourceAttr(resourceName, "cpu_core_count", strconv.Itoa(originalCoreCount)),
-					resource.TestCheckResourceAttr(resourceName, "cpu_threads_per_core", strconv.Itoa(originalThreadsPerCore)),
 				),
 			},
 			{
@@ -3892,8 +3890,6 @@ func TestAccEC2Instance_cpuOptionsAmdSevSnpCoreThreads(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.0.amd_sev_snp", ec2.AmdSevSnpSpecificationDisabled),
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.0.core_count", strconv.Itoa(updatedCoreCount)),
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.0.threads_per_core", strconv.Itoa(updatedThreadsPerCore)),
-					resource.TestCheckResourceAttr(resourceName, "cpu_core_count", strconv.Itoa(updatedCoreCount)),
-					resource.TestCheckResourceAttr(resourceName, "cpu_threads_per_core", strconv.Itoa(updatedThreadsPerCore)),
 				),
 			},
 		},
@@ -3924,8 +3920,6 @@ func TestAccEC2Instance_cpuOptionsCoreThreads(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.0.core_count", strconv.Itoa(originalCoreCount)),
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.0.threads_per_core", strconv.Itoa(originalThreadsPerCore)),
-					resource.TestCheckResourceAttr(resourceName, "cpu_core_count", strconv.Itoa(originalCoreCount)),
-					resource.TestCheckResourceAttr(resourceName, "cpu_threads_per_core", strconv.Itoa(originalThreadsPerCore)),
 				),
 			},
 			{
@@ -3942,8 +3936,6 @@ func TestAccEC2Instance_cpuOptionsCoreThreads(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.0.core_count", strconv.Itoa(updatedCoreCount)),
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.0.threads_per_core", strconv.Itoa(updatedThreadsPerCore)),
-					resource.TestCheckResourceAttr(resourceName, "cpu_core_count", strconv.Itoa(updatedCoreCount)),
-					resource.TestCheckResourceAttr(resourceName, "cpu_threads_per_core", strconv.Itoa(updatedThreadsPerCore)),
 				),
 			},
 		},
@@ -3972,8 +3964,6 @@ func TestAccEC2Instance_cpuOptionsCoreThreadsMigration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.0.core_count", strconv.Itoa(coreCount)),
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.0.threads_per_core", strconv.Itoa(threadsPerCore)),
-					resource.TestCheckResourceAttr(resourceName, "cpu_core_count", strconv.Itoa(coreCount)),
-					resource.TestCheckResourceAttr(resourceName, "cpu_threads_per_core", strconv.Itoa(threadsPerCore)),
 				),
 			},
 			{
@@ -3991,8 +3981,6 @@ func TestAccEC2Instance_cpuOptionsCoreThreadsMigration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.0.core_count", strconv.Itoa(coreCount)),
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.0.threads_per_core", strconv.Itoa(threadsPerCore)),
-					resource.TestCheckResourceAttr(resourceName, "cpu_core_count", strconv.Itoa(coreCount)),
-					resource.TestCheckResourceAttr(resourceName, "cpu_threads_per_core", strconv.Itoa(threadsPerCore)),
 				),
 			},
 		},
@@ -4021,8 +4009,6 @@ func TestAccEC2Instance_cpuOptionsCoreThreadsUnspecifiedToSpecified(t *testing.T
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.0.core_count", strconv.Itoa(defaultCoreCount)),
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.0.threads_per_core", strconv.Itoa(defaultThreadsPerCore)),
-					resource.TestCheckResourceAttr(resourceName, "cpu_core_count", strconv.Itoa(defaultCoreCount)),
-					resource.TestCheckResourceAttr(resourceName, "cpu_threads_per_core", strconv.Itoa(defaultThreadsPerCore)),
 				),
 			},
 			{
@@ -4040,8 +4026,6 @@ func TestAccEC2Instance_cpuOptionsCoreThreadsUnspecifiedToSpecified(t *testing.T
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.0.core_count", strconv.Itoa(defaultCoreCount)),
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.0.threads_per_core", strconv.Itoa(defaultThreadsPerCore)),
-					resource.TestCheckResourceAttr(resourceName, "cpu_core_count", strconv.Itoa(defaultCoreCount)),
-					resource.TestCheckResourceAttr(resourceName, "cpu_threads_per_core", strconv.Itoa(defaultThreadsPerCore)),
 				),
 			},
 		},
@@ -5432,46 +5416,6 @@ func TestInstanceHostIDSchema(t *testing.T) {
 		Optional: true,
 		Computed: true,
 		ForceNew: true,
-	}
-	if !reflect.DeepEqual(actualSchema, expectedSchema) {
-		t.Fatalf(
-			"Got:\n\n%#v\n\nExpected:\n\n%#v\n",
-			actualSchema,
-			expectedSchema)
-	}
-}
-
-func TestInstanceCPUCoreCountSchema(t *testing.T) {
-	t.Parallel()
-
-	actualSchema := tfec2.ResourceInstance().Schema["cpu_core_count"]
-	expectedSchema := &schema.Schema{
-		Type:          schema.TypeInt,
-		Optional:      true,
-		Computed:      true,
-		ForceNew:      true,
-		Deprecated:    "use 'cpu_options' argument instead",
-		ConflictsWith: []string{"cpu_options.0.core_count"},
-	}
-	if !reflect.DeepEqual(actualSchema, expectedSchema) {
-		t.Fatalf(
-			"Got:\n\n%#v\n\nExpected:\n\n%#v\n",
-			actualSchema,
-			expectedSchema)
-	}
-}
-
-func TestInstanceCPUThreadsPerCoreSchema(t *testing.T) {
-	t.Parallel()
-
-	actualSchema := tfec2.ResourceInstance().Schema["cpu_threads_per_core"]
-	expectedSchema := &schema.Schema{
-		Type:          schema.TypeInt,
-		Optional:      true,
-		Computed:      true,
-		ForceNew:      true,
-		Deprecated:    "use 'cpu_options' argument instead",
-		ConflictsWith: []string{"cpu_options.0.threads_per_core"},
 	}
 	if !reflect.DeepEqual(actualSchema, expectedSchema) {
 		t.Fatalf(
@@ -8152,9 +8096,6 @@ resource "aws_instance" "test" {
   ami           = data.aws_ami.amzn-linux-2023-ami.id
   instance_type = data.aws_ec2_instance_type_offering.available.instance_type
   subnet_id     = aws_subnet.test.id
-
-  cpu_core_count       = %[2]d
-  cpu_threads_per_core = %[3]d
 
   tags = {
     Name = %[1]q
