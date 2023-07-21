@@ -739,6 +739,8 @@ func TestAccElasticsearchDomain_LogPublishingOptions_indexSlowLogs(t *testing.T)
 	var domain elasticsearch.ElasticsearchDomainStatus
 	rName := testAccRandomDomainName()
 	resourceName := "aws_elasticsearch_domain.test"
+	setPublishLogs := true
+	setLogGroup := true
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.PreCheck(ctx, t); testAccPreCheckIAMServiceLinkedRole(ctx, t) },
@@ -747,7 +749,7 @@ func TestAccElasticsearchDomain_LogPublishingOptions_indexSlowLogs(t *testing.T)
 		CheckDestroy:             testAccCheckDomainDestroy(ctx),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDomainConfig_logPublishingOptions(rName, elasticsearch.LogTypeIndexSlowLogs),
+				Config: testAccDomainConfig_logPublishingOptions(rName, elasticsearch.LogTypeIndexSlowLogs, setPublishLogs, setLogGroup),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckDomainExists(ctx, resourceName, &domain),
 					resource.TestCheckResourceAttr(resourceName, "log_publishing_options.#", "1"),
@@ -775,6 +777,8 @@ func TestAccElasticsearchDomain_LogPublishingOptions_searchSlowLogs(t *testing.T
 	var domain elasticsearch.ElasticsearchDomainStatus
 	rName := testAccRandomDomainName()
 	resourceName := "aws_elasticsearch_domain.test"
+	setPublishLogs := true
+	setLogGroup := true
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.PreCheck(ctx, t); testAccPreCheckIAMServiceLinkedRole(ctx, t) },
@@ -783,7 +787,7 @@ func TestAccElasticsearchDomain_LogPublishingOptions_searchSlowLogs(t *testing.T
 		CheckDestroy:             testAccCheckDomainDestroy(ctx),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDomainConfig_logPublishingOptions(rName, elasticsearch.LogTypeSearchSlowLogs),
+				Config: testAccDomainConfig_logPublishingOptions(rName, elasticsearch.LogTypeSearchSlowLogs, setPublishLogs, setLogGroup),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckDomainExists(ctx, resourceName, &domain),
 					resource.TestCheckResourceAttr(resourceName, "log_publishing_options.#", "1"),
@@ -811,6 +815,8 @@ func TestAccElasticsearchDomain_LogPublishingOptions_esApplicationLogs(t *testin
 	var domain elasticsearch.ElasticsearchDomainStatus
 	rName := testAccRandomDomainName()
 	resourceName := "aws_elasticsearch_domain.test"
+	setPublishLogs := true
+	setLogGroup := true
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.PreCheck(ctx, t); testAccPreCheckIAMServiceLinkedRole(ctx, t) },
@@ -819,7 +825,7 @@ func TestAccElasticsearchDomain_LogPublishingOptions_esApplicationLogs(t *testin
 		CheckDestroy:             testAccCheckDomainDestroy(ctx),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDomainConfig_logPublishingOptions(rName, elasticsearch.LogTypeEsApplicationLogs),
+				Config: testAccDomainConfig_logPublishingOptions(rName, elasticsearch.LogTypeEsApplicationLogs, setPublishLogs, setLogGroup),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckDomainExists(ctx, resourceName, &domain),
 					resource.TestCheckResourceAttr(resourceName, "log_publishing_options.#", "1"),
@@ -847,6 +853,8 @@ func TestAccElasticsearchDomain_LogPublishingOptions_auditLogs(t *testing.T) {
 	var domain elasticsearch.ElasticsearchDomainStatus
 	rName := testAccRandomDomainName()
 	resourceName := "aws_elasticsearch_domain.test"
+	setPublishLogs := true
+	setLogGroup := true
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { acctest.PreCheck(ctx, t); testAccPreCheckIAMServiceLinkedRole(ctx, t) },
@@ -855,7 +863,87 @@ func TestAccElasticsearchDomain_LogPublishingOptions_auditLogs(t *testing.T) {
 		CheckDestroy:             testAccCheckDomainDestroy(ctx),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDomainConfig_logPublishingOptions(rName, elasticsearch.LogTypeAuditLogs),
+				Config: testAccDomainConfig_logPublishingOptions(rName, elasticsearch.LogTypeAuditLogs, setPublishLogs, setLogGroup),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckDomainExists(ctx, resourceName, &domain),
+					resource.TestCheckResourceAttr(resourceName, "log_publishing_options.#", "1"),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "log_publishing_options.*", map[string]string{
+						"log_type": elasticsearch.LogTypeAuditLogs,
+					}),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateId:     rName,
+				ImportStateVerify: true,
+				// MasterUserOptions are not returned from DescribeElasticsearchDomainConfig
+				ImportStateVerifyIgnore: []string{"advanced_security_options.0.master_user_options"},
+			},
+		},
+	})
+}
+
+func TestAccElasticsearchDomain_LogPublishingOptions_unsetLogGroup(t *testing.T) {
+	ctx := acctest.Context(t)
+	if testing.Short() {
+		t.Skip("skipping long-running test in short mode")
+	}
+
+	var domain elasticsearch.ElasticsearchDomainStatus
+	rName := testAccRandomDomainName()
+	resourceName := "aws_elasticsearch_domain.test"
+	setPublishLogs := true
+	setLogGroup := false
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.PreCheck(ctx, t); testAccPreCheckIAMServiceLinkedRole(ctx, t) },
+		ErrorCheck:               acctest.ErrorCheck(t, elasticsearch.EndpointsID),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories,
+		CheckDestroy:             testAccCheckDomainDestroy(ctx),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDomainConfig_logPublishingOptions(rName, elasticsearch.LogTypeAuditLogs, setPublishLogs, setLogGroup),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckDomainExists(ctx, resourceName, &domain),
+					resource.TestCheckResourceAttr(resourceName, "log_publishing_options.#", "1"),
+					resource.TestCheckTypeSetElemNestedAttrs(resourceName, "log_publishing_options.*", map[string]string{
+						"log_type": elasticsearch.LogTypeAuditLogs,
+					}),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateId:     rName,
+				ImportStateVerify: true,
+				// MasterUserOptions are not returned from DescribeElasticsearchDomainConfig
+				ImportStateVerifyIgnore: []string{"advanced_security_options.0.master_user_options"},
+			},
+		},
+	})
+}
+
+func TestAccElasticsearchDomain_LogPublishingOptions_unsetPublishLog(t *testing.T) {
+	ctx := acctest.Context(t)
+	if testing.Short() {
+		t.Skip("skipping long-running test in short mode")
+	}
+
+	var domain elasticsearch.ElasticsearchDomainStatus
+	rName := testAccRandomDomainName()
+	resourceName := "aws_elasticsearch_domain.test"
+	setPublishLogs := false
+	setLogGroup := false
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.PreCheck(ctx, t); testAccPreCheckIAMServiceLinkedRole(ctx, t) },
+		ErrorCheck:               acctest.ErrorCheck(t, elasticsearch.EndpointsID),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories,
+		CheckDestroy:             testAccCheckDomainDestroy(ctx),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDomainConfig_logPublishingOptions(rName, elasticsearch.LogTypeAuditLogs, setPublishLogs, setLogGroup),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckDomainExists(ctx, resourceName, &domain),
 					resource.TestCheckResourceAttr(resourceName, "log_publishing_options.#", "1"),
@@ -2903,50 +2991,63 @@ resource "aws_cloudwatch_log_resource_policy" "test" {
 `, rName)
 }
 
-func testAccDomainConfig_logPublishingOptions(rName, logType string) string {
+func testAccDomainConfig_logPublishingOptions(rName, logType string, setPublishLogOpts bool, setLogGroup bool) string {
 	var auditLogsConfig string
+	var logPublishingBaseConfig string
+	var logPublishingOptionsConfig string
+
+	if setPublishLogOpts {
+		logPublishingBaseConfig = testAccDomain_LogPublishingOptions_BaseConfig(rName)
+
+		logPublishingOptionsConfig = fmt.Sprintf(`
+      log_publishing_options {
+        log_type                 = %[1]q
+        cloudwatch_log_group_arn = %[2]t ? aws_cloudwatch_log_group.test.arn : null
+      }`, logType, setLogGroup)
+	}
+
 	if logType == elasticsearch.LogTypeAuditLogs {
 		auditLogsConfig = `
-	  	advanced_security_options {
-			enabled                        = true
-			internal_user_database_enabled = true
-			master_user_options {
-			  master_user_name     = "testmasteruser"
-			  master_user_password = "Barbarbarbar1!"
-			}
-	  	}
-	
-		domain_endpoint_options {
-	  		enforce_https       = true
-	  		tls_security_policy = "Policy-Min-TLS-1-2-2019-07"
-		}
-	
-		encrypt_at_rest {
-			enabled = true
-		}
-	
-		node_to_node_encryption {
-			enabled = true
-		}`
+      advanced_security_options {
+        enabled                        = true
+        internal_user_database_enabled = true
+        master_user_options {
+          master_user_name     = "testmasteruser"
+          master_user_password = "Barbarbarbar1!"
+        }
+      }
+
+      domain_endpoint_options {
+        enforce_https       = true
+        tls_security_policy = "Policy-Min-TLS-1-2-2019-07"
+      }
+
+      encrypt_at_rest {
+        enabled = true
+      }
+
+      node_to_node_encryption {
+        enabled = true
+      }`
 	}
-	return acctest.ConfigCompose(testAccDomain_LogPublishingOptions_BaseConfig(rName), fmt.Sprintf(`
-resource "aws_elasticsearch_domain" "test" {
-  domain_name           = %[1]q
-  elasticsearch_version = "7.1" # needed for ESApplication/Audit Log Types
 
-  ebs_options {
-    ebs_enabled = true
-    volume_size = 10
-  }
+	domainResourcesConfig := fmt.Sprintf(`
+    resource "aws_elasticsearch_domain" "test" {
+      domain_name           = %[1]q
+      elasticsearch_version = "7.1" # needed for ESApplication/Audit Log Types
 
-    %[2]s
+      ebs_options {
+        ebs_enabled = true
+        volume_size = 10
+      }
 
-  log_publishing_options {
-    log_type                 = %[3]q
-    cloudwatch_log_group_arn = aws_cloudwatch_log_group.test.arn
-  }
-}
-`, rName, auditLogsConfig, logType))
+      %[2]s
+
+      %[3]s
+
+    }`, rName, auditLogsConfig, logPublishingOptionsConfig)
+
+	return acctest.ConfigCompose(logPublishingBaseConfig, domainResourcesConfig)
 }
 
 func testAccDomainConfig_cognitoOptions(rName string, includeCognitoOptions bool) string {
