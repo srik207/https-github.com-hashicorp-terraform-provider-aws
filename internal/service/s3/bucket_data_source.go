@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/arn"
@@ -27,7 +28,11 @@ func DataSourceBucket() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"bucket": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
+			},
+			"name_prefix": {
+				Type:     schema.TypeString,
+				Optional: true,
 			},
 			"arn": {
 				Type:     schema.TypeString,
@@ -65,17 +70,44 @@ func dataSourceBucketRead(ctx context.Context, d *schema.ResourceData, meta inte
 	var diags diag.Diagnostics
 	conn := meta.(*conns.AWSClient).S3Conn(ctx)
 
-	bucket := d.Get("bucket").(string)
+	var bucket string
+	if v, ok := d.GetOk("bucket"); ok {
+		bucket = v.(string)
 
-	input := &s3.HeadBucketInput{
-		Bucket: aws.String(bucket),
-	}
+		input := &s3.HeadBucketInput{
+			Bucket: aws.String(bucket),
+		}
 
-	log.Printf("[DEBUG] Reading S3 bucket: %s", input)
-	_, err := conn.HeadBucketWithContext(ctx, input)
+		log.Printf("[DEBUG] Reading S3 bucket: %s", input)
+		_, err := conn.HeadBucketWithContext(ctx, input)
 
-	if err != nil {
-		return sdkdiag.AppendErrorf(diags, "Failed getting S3 bucket (%s): %s", bucket, err)
+		if err != nil {
+			return sdkdiag.AppendErrorf(diags, "Failed getting S3 bucket (%s): %s", bucket, err)
+		}
+	} else if v, ok := d.GetOk("name_prefix"); ok {
+		prefix := v.(string)
+		input := &s3.ListBucketsInput{}
+
+		log.Printf("[DEBUG] Checking for S3 bucket with prefix: %s", prefix)
+		listBucketOutput, err := conn.ListBucketsWithContext(ctx, input)
+
+		if err != nil {
+			return sdkdiag.AppendErrorf(diags, "Failed listing S3 buckets: %s", err)
+		}
+
+		for _, buc := range listBucketOutput.Buckets {
+			if strings.HasPrefix(*buc.Name, prefix) {
+				bucket = aws.StringValue(buc.Name)
+				break
+			}
+		}
+
+		if bucket == "" {
+			return sdkdiag.AppendErrorf(diags, "Bucket does not exist with prefix: %s", prefix)
+		}
+
+	} else {
+		return sdkdiag.AppendErrorf(diags, "Have to provide bucket name or bucket name prefix")
 	}
 
 	d.SetId(bucket)
@@ -87,7 +119,7 @@ func dataSourceBucketRead(ctx context.Context, d *schema.ResourceData, meta inte
 	d.Set("arn", arn)
 	d.Set("bucket_domain_name", meta.(*conns.AWSClient).PartitionHostname(fmt.Sprintf("%s.s3", bucket)))
 
-	err = bucketLocation(ctx, meta.(*conns.AWSClient), d, bucket)
+	err := bucketLocation(ctx, meta.(*conns.AWSClient), d, bucket)
 	if err != nil {
 		return sdkdiag.AppendErrorf(diags, "getting S3 Bucket location: %s", err)
 	}
