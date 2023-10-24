@@ -46,6 +46,32 @@ func TestAccCognitoIDPUserInGroup_basic(t *testing.T) {
 	})
 }
 
+func TestAccCognitoIDPUserInGroup_import(t *testing.T) {
+	ctx := acctest.Context(t)
+	rName := sdkacctest.RandomWithPrefix(acctest.ResourcePrefix)
+	resourceName := "aws_cognito_user_in_group.test"
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:                 func() { acctest.PreCheck(ctx, t) },
+		ErrorCheck:               acctest.ErrorCheck(t, cognitoidentityprovider.EndpointsID),
+		ProtoV5ProviderFactories: acctest.ProtoV5ProviderFactories,
+		CheckDestroy:             testAccCheckUserInGroupDestroy(ctx),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccUserInGroupConfig_basic(rName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckUserInGroupExists(ctx, resourceName),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestAccCognitoIDPUserInGroup_disappears(t *testing.T) {
 	ctx := acctest.Context(t)
 	rName := sdkacctest.RandomWithPrefix(acctest.ResourcePrefix)
