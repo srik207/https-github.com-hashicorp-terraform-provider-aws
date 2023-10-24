@@ -65,8 +65,8 @@ import {
 }
 ```
 
-Import the user in group for another account using the `user_pool_id` and `group_name` and `username` separated by a forward slash (`/`). For example:
+Using `terraform import`, import Cognito User in Groups using the `user_pool_id` and `group_name` and `username` separated by a forward slash (`/`). For example:
 
-```shell
-terraform import aws_cognito_user_in_group.example us-east-1_vG78M4goG/group-name/user-name
+```console
+% terraform import aws_cognito_user_in_group.example us-east-1_vG78M4goG/group-name/user-name
 ```
