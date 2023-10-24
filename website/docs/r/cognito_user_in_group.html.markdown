@@ -53,3 +53,9 @@ The following arguments are required:
 ## Attribute Reference
 
 This resource exports no additional attributes.
+
+## Import
+
+```console
+% terraform import aws_cognito_user_in_group.example <user pool>/<group name>/<user name>
+```
