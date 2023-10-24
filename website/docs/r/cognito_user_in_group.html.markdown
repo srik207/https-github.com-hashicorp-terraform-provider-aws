@@ -56,6 +56,8 @@ This resource exports no additional attributes.
 
 ## Import
 
-```console
-% terraform import aws_cognito_user_in_group.example <user pool>/<group name>/<user name>
+Import the user in group for another account using the `user_pool_id` and `group_name` and `username` separated by a forward slash (`/`):
+
+```terraform
+% terraform import aws_cognito_user_in_group.example us-east-1_vG78M4goG/group-name/user-name
 ```
