@@ -396,7 +396,7 @@ func InstanceStateUpgradeV0(_ context.Context, rawState map[string]interface{}, 
 		return nil, nil
 	}
 
-	rawState["delete_automated_backups"] = true
+	rawState["delete_automated_backups"] = false
 
 	return rawState, nil
 }
