@@ -15,7 +15,7 @@ func FetchLatestGitHubPublicKey(pgpKey string) (string, error) {
 		return "", fmt.Errorf("invalid GPG key format for Github, received='%s', expected='github:$username'", pgpKey)
 	}
 
-	username := stringComponents[1]
+	username := strings.TrimSpace(stringComponents[1])
 	url := fmt.Sprintf("https://github.com/%s.gpg", username)
 	resp, err := cleanhttp.DefaultClient().Get(url)
 
