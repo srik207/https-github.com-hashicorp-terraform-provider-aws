@@ -1,11 +1,10 @@
 package pgpkeys
 
 import (
-	"bytes"
 	"encoding/base64"
 	"fmt"
+	"github.com/ProtonMail/gopenpgp/v2/crypto"
 	"github.com/hashicorp/go-cleanhttp"
-	"golang.org/x/crypto/openpgp"
 	"io"
 	"strings"
 )
@@ -27,23 +26,17 @@ func FetchLatestGitHubPublicKey(pgpKey string) (string, error) {
 
 	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", fmt.Errorf("failed to read response body containing GPG Public Key from GitHub")
+		return "", fmt.Errorf("failed to read response body containing ASCII GPG Public Key from GitHub")
 	}
 
 	bodyString := string(bodyBytes)
-	keyring, err := openpgp.ReadArmoredKeyRing(strings.NewReader(bodyString))
+	key, err := crypto.NewKeyFromArmored(bodyString)
 	if err != nil {
 		return "", fmt.Errorf("error reading keyring: %w", err)
 	}
-	if len(keyring) < 1 {
-		return "", fmt.Errorf("no key found in keyring")
-	}
-
-	var buf bytes.Buffer
-	err = keyring[0].Serialize(&buf)
+	bytes, err := key.GetPublicKey()
 	if err != nil {
-		return "", fmt.Errorf("serialize first GitHub GPG Key from keyring: %w", err)
+		return "", fmt.Errorf("failed to serialize raw GPG Public Key from GitHub")
 	}
-
-	return base64.StdEncoding.EncodeToString(buf.Bytes()), nil
+	return base64.StdEncoding.EncodeToString(bytes), nil
 }
