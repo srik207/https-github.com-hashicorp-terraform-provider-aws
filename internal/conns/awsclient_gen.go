@@ -39,6 +39,7 @@ import (
 	evidently_sdkv2 "github.com/aws/aws-sdk-go-v2/service/evidently"
 	finspace_sdkv2 "github.com/aws/aws-sdk-go-v2/service/finspace"
 	fis_sdkv2 "github.com/aws/aws-sdk-go-v2/service/fis"
+	fsx_sdkv2 "github.com/aws/aws-sdk-go-v2/service/fsx"
 	glacier_sdkv2 "github.com/aws/aws-sdk-go-v2/service/glacier"
 	healthlake_sdkv2 "github.com/aws/aws-sdk-go-v2/service/healthlake"
 	identitystore_sdkv2 "github.com/aws/aws-sdk-go-v2/service/identitystore"
@@ -618,6 +619,10 @@ func (c *AWSClient) FMSConn(ctx context.Context) *fms_sdkv1.FMS {
 
 func (c *AWSClient) FSxConn(ctx context.Context) *fsx_sdkv1.FSx {
 	return errs.Must(conn[*fsx_sdkv1.FSx](ctx, c, names.FSx, make(map[string]any)))
+}
+
+func (c *AWSClient) FSxClient(ctx context.Context) *fsx_sdkv2.Client {
+	return errs.Must(client[*fsx_sdkv2.Client](ctx, c, names.FSx))
 }
 
 func (c *AWSClient) FinSpaceClient(ctx context.Context) *finspace_sdkv2.Client {

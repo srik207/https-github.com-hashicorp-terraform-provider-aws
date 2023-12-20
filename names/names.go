@@ -94,6 +94,7 @@ const (
 	TranscribeEndpointID                 = "transcribe"
 	VPCLatticeEndpointID                 = "vpc-lattice"
 	XRayEndpointID                       = "xray"
+	FSxEndpointID                        = "fsx"
 )
 
 // These should move to aws-sdk-go-base.
