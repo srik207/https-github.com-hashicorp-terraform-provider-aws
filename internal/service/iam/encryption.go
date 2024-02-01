@@ -6,9 +6,8 @@ package iam
 import (
 	"encoding/base64"
 	"fmt"
-	"strings"
-
 	"github.com/hashicorp/terraform-provider-aws/internal/vault/helper/pgpkeys"
+	"strings"
 )
 
 // retrieveGPGKey returns the PGP key specified as the pgpKey parameter, or queries
@@ -16,14 +15,26 @@ import (
 // prefixed with the phrase "keybase:"
 func retrieveGPGKey(pgpKey string) (string, error) {
 	const keybasePrefix = "keybase:"
+	const githubPrefix = "github:"
 
-	encryptionKey := pgpKey
-	if strings.HasPrefix(pgpKey, keybasePrefix) {
+	var encryptionKey string
+	switch {
+	case strings.HasPrefix(pgpKey, keybasePrefix):
 		publicKeys, err := pgpkeys.FetchKeybasePubkeys([]string{pgpKey})
 		if err != nil {
-			return "", fmt.Errorf("retrieving Public Key (%s): %w", pgpKey, err)
+			return "", fmt.Errorf("retrieving Public Key from Keybase (%s): %w", pgpKey, err)
 		}
 		encryptionKey = publicKeys[pgpKey]
+
+	case strings.HasPrefix(pgpKey, githubPrefix):
+		latestGpgPublicKey, err := pgpkeys.FetchLatestGitHubPublicKey(pgpKey)
+		if err != nil {
+			return "", fmt.Errorf("retrieving Public Key from GitHub (%s): %w", pgpKey, err)
+		}
+		encryptionKey = latestGpgPublicKey
+
+	default:
+		encryptionKey = pgpKey
 	}
 
 	return encryptionKey, nil
