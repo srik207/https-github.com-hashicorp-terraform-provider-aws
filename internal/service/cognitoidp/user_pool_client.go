@@ -23,6 +23,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setplanmodifier"
@@ -37,6 +38,12 @@ import (
 	fwtypes "github.com/hashicorp/terraform-provider-aws/internal/framework/types"
 	"github.com/hashicorp/terraform-provider-aws/internal/tfresource"
 	"github.com/hashicorp/terraform-provider-aws/names"
+)
+
+const (
+	accessTokenValidityDefaultValue  = 1
+	idTokenValidityDefaultValue      = 1
+	refreshTokenValidityDefaultValue = 30
 )
 
 // @FrameworkResource
@@ -62,6 +69,7 @@ func (r *resourceUserPoolClient) Schema(ctx context.Context, request resource.Sc
 			"access_token_validity": schema.Int64Attribute{
 				Optional: true,
 				Computed: true,
+				Default:  int64default.StaticInt64(accessTokenValidityDefaultValue),
 				PlanModifiers: []planmodifier.Int64{
 					int64planmodifier.UseStateForUnknown(),
 				},
@@ -174,6 +182,7 @@ func (r *resourceUserPoolClient) Schema(ctx context.Context, request resource.Sc
 			"id_token_validity": schema.Int64Attribute{
 				Optional: true,
 				Computed: true,
+				Default:  int64default.StaticInt64(idTokenValidityDefaultValue),
 				PlanModifiers: []planmodifier.Int64{
 					int64planmodifier.UseStateForUnknown(),
 				},
@@ -217,6 +226,7 @@ func (r *resourceUserPoolClient) Schema(ctx context.Context, request resource.Sc
 			"refresh_token_validity": schema.Int64Attribute{
 				Optional: true,
 				Computed: true,
+				Default:  int64default.StaticInt64(refreshTokenValidityDefaultValue),
 				PlanModifiers: []planmodifier.Int64{
 					int64planmodifier.UseStateForUnknown(),
 				},
