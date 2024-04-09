@@ -21,7 +21,7 @@ Manages a CloudFormation StackSet Instance. Instances are managed in the account
 ```terraform
 resource "aws_cloudformation_stack_set_instance" "example" {
   account_id     = "123456789012"
-  region         = "us-east-1"
+  regions        = ["us-east-1"]
   stack_set_name = aws_cloudformation_stack_set.example.name
 }
 ```
@@ -76,7 +76,7 @@ resource "aws_cloudformation_stack_set_instance" "example" {
     organizational_unit_ids = [aws_organizations_organization.example.roots[0].id]
   }
 
-  region         = "us-east-1"
+  regions        = ["us-east-1"]
   stack_set_name = aws_cloudformation_stack_set.example.name
 }
 ```
@@ -89,7 +89,7 @@ This resource supports the following arguments:
 * `account_id` - (Optional) Target AWS Account ID to create a Stack based on the StackSet. Defaults to current account.
 * `deployment_targets` - (Optional) The AWS Organizations accounts to which StackSets deploys. StackSets doesn't deploy stack instances to the organization management account, even if the organization management account is in your organization or in an OU in your organization. Drift detection is not possible for this argument. See [deployment_targets](#deployment_targets-argument-reference) below.
 * `parameter_overrides` - (Optional) Key-value map of input parameters to override from the StackSet for this Instance.
-* `region` - (Optional) Target AWS Region to create a Stack based on the StackSet. Defaults to current region.
+* `regions` - (Required) Target AWS Regions to create a Stack based on the StackSet.
 * `retain_stack` - (Optional) During Terraform resource destroy, remove Instance from StackSet while keeping the Stack and its associated resources. Must be enabled in Terraform state _before_ destroy operation to take effect. You cannot reassociate a retained Stack or add an existing, saved Stack to a new StackSet. Defaults to `false`.
 * `call_as` - (Optional) Specifies whether you are acting as an account administrator in the organization's management account or as a delegated administrator in a member account. Valid values: `SELF` (default), `DELEGATED_ADMIN`.
 * `operation_preferences` - (Optional) Preferences for how AWS CloudFormation performs a stack set operation.
