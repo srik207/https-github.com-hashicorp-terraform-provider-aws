@@ -28,6 +28,7 @@ func TestAccSecurityLake_serial(t *testing.T) {
 			"tags":            testAccDataLake_tags,
 			"lifecycle":       testAccDataLake_lifeCycle,
 			"lifecycleUpdate": testAccDataLake_lifeCycleUpdate,
+			"metaStoreUpdate": testAccDataLake_metaStoreUpdate,
 			"replication":     testAccDataLake_replication,
 		},
 		"Subscriber": {
