@@ -446,6 +446,10 @@ func resourceStackSetInstanceDelete(ctx context.Context, d *schema.ResourceData,
 		input.DeploymentTargets = dt
 	}
 
+	if v, ok := d.GetOk("operation_preferences"); ok && len(v.([]interface{})) > 0 && v.([]interface{})[0] != nil {
+		input.OperationPreferences = expandOperationPreferences(v.([]interface{})[0].(map[string]interface{}))
+	}
+
 	log.Printf("[DEBUG] Deleting CloudFormation StackSet Instance: %s", d.Id())
 	outputRaw, err := tfresource.RetryWhenAWSErrCodeEquals(ctx, d.Timeout(schema.TimeoutDelete), func() (interface{}, error) {
 		return conn.DeleteStackInstancesWithContext(ctx, input)
