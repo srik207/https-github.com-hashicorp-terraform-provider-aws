@@ -45,7 +45,7 @@ func TestAccCloudFormationStackSetInstance_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "operation_preferences.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "organizational_unit_id", ""),
 					resource.TestCheckResourceAttr(resourceName, "parameter_overrides.%", "0"),
-					resource.TestCheckResourceAttr(resourceName, "region", acctest.Region()),
+					resource.TestCheckResourceAttr(resourceName, "regions.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "retain_stack", "false"),
 					resource.TestCheckResourceAttrSet(resourceName, "stack_id"),
 					resource.TestCheckResourceAttr(resourceName, "stack_instance_summaries.#", "0"),
@@ -449,13 +449,13 @@ func testAccCheckStackSetInstanceExists(ctx context.Context, resourceName string
 
 		conn := acctest.Provider.Meta().(*conns.AWSClient).CloudFormationConn(ctx)
 
-		stackSetName, accountID, region, err := tfcloudformation.StackSetInstanceParseResourceID(rs.Primary.ID)
+		stackSetName, accountID, regions, err := tfcloudformation.StackSetInstanceParseResourceID(rs.Primary.ID)
 
 		if err != nil {
 			return err
 		}
 
-		output, err := tfcloudformation.FindStackInstanceByName(ctx, conn, stackSetName, accountID, region, callAs)
+		output, err := tfcloudformation.FindStackInstanceByName(ctx, conn, stackSetName, accountID, regions, callAs)
 
 		if err != nil {
 			return err
@@ -481,13 +481,13 @@ func testAccCheckStackSetInstanceForOrganizationalUnitExists(ctx context.Context
 
 		conn := acctest.Provider.Meta().(*conns.AWSClient).CloudFormationConn(ctx)
 
-		stackSetName, accountOrOrgID, region, err := tfcloudformation.StackSetInstanceParseResourceID(rs.Primary.ID)
+		stackSetName, accountOrOrgID, regions, err := tfcloudformation.StackSetInstanceParseResourceID(rs.Primary.ID)
 		if err != nil {
 			return err
 		}
 		orgIDs := strings.Split(accountOrOrgID, "/")
 
-		output, err := tfcloudformation.FindStackInstanceSummariesByOrgIDs(ctx, conn, stackSetName, region, callAs, orgIDs)
+		output, err := tfcloudformation.FindStackInstanceSummariesByOrgIDs(ctx, conn, stackSetName, regions, callAs, orgIDs)
 
 		if err != nil {
 			return err
@@ -513,13 +513,13 @@ func testAccCheckStackSetInstanceForOrganizationalUnitDestroy(ctx context.Contex
 
 			callAs := rs.Primary.Attributes["call_as"]
 
-			stackSetName, accountOrOrgID, region, err := tfcloudformation.StackSetInstanceParseResourceID(rs.Primary.ID)
+			stackSetName, accountOrOrgID, regions, err := tfcloudformation.StackSetInstanceParseResourceID(rs.Primary.ID)
 			if err != nil {
 				return err
 			}
 			orgIDs := strings.Split(accountOrOrgID, "/")
 
-			output, err := tfcloudformation.FindStackInstanceSummariesByOrgIDs(ctx, conn, stackSetName, region, callAs, orgIDs)
+			output, err := tfcloudformation.FindStackInstanceSummariesByOrgIDs(ctx, conn, stackSetName, regions, callAs, orgIDs)
 
 			if tfresource.NotFound(err) {
 				continue
@@ -566,13 +566,13 @@ func testAccCheckStackSetInstanceDestroy(ctx context.Context) resource.TestCheck
 
 			callAs := rs.Primary.Attributes["call_as"]
 
-			stackSetName, accountID, region, err := tfcloudformation.StackSetInstanceParseResourceID(rs.Primary.ID)
+			stackSetName, accountID, regions, err := tfcloudformation.StackSetInstanceParseResourceID(rs.Primary.ID)
 
 			if err != nil {
 				return err
 			}
 
-			_, err = tfcloudformation.FindStackInstanceByName(ctx, conn, stackSetName, accountID, region, callAs)
+			_, err = tfcloudformation.FindStackInstanceByName(ctx, conn, stackSetName, accountID, regions, callAs)
 
 			if tfresource.NotFound(err) {
 				continue
@@ -730,53 +730,53 @@ TEMPLATE
 }
 
 func testAccStackSetInstanceConfig_basic(rName string) string {
-	return acctest.ConfigCompose(testAccStackSetInstanceBaseConfig(rName), `
+	return acctest.ConfigCompose(testAccStackSetInstanceBaseConfig(rName), fmt.Sprintf(`
 resource "aws_cloudformation_stack_set_instance" "test" {
-  depends_on = [aws_iam_role_policy.Administration, aws_iam_role_policy.Execution]
-
+  depends_on     = [aws_iam_role_policy.Administration, aws_iam_role_policy.Execution]
+  regions        = [%[1]q, %[2]q]
   stack_set_name = aws_cloudformation_stack_set.test.name
 }
-`)
+`, acctest.Region(), acctest.AlternateRegion()))
 }
 
 func testAccStackSetInstanceConfig_parameterOverrides1(rName, value1 string) string {
 	return acctest.ConfigCompose(testAccStackSetInstanceBaseConfig(rName), fmt.Sprintf(`
 resource "aws_cloudformation_stack_set_instance" "test" {
   depends_on = [aws_iam_role_policy.Administration, aws_iam_role_policy.Execution]
-
+  regions    = [%[1]q, %[2]q]
   parameter_overrides = {
-    Parameter1 = %[1]q
+    Parameter1 = %[3]q
   }
 
   stack_set_name = aws_cloudformation_stack_set.test.name
 }
-`, value1))
+`, acctest.Region(), acctest.AlternateRegion(), value1))
 }
 
 func testAccStackSetInstanceConfig_parameterOverrides2(rName, value1, value2 string) string {
 	return acctest.ConfigCompose(testAccStackSetInstanceBaseConfig(rName), fmt.Sprintf(`
 resource "aws_cloudformation_stack_set_instance" "test" {
   depends_on = [aws_iam_role_policy.Administration, aws_iam_role_policy.Execution]
-
+  regions    = [%[1]q, %[2]q]
   parameter_overrides = {
-    Parameter1 = %[1]q
-    Parameter2 = %[2]q
+    Parameter1 = %[3]q
+    Parameter2 = %[4]q
   }
 
   stack_set_name = aws_cloudformation_stack_set.test.name
 }
-`, value1, value2))
+`, acctest.Region(), acctest.AlternateRegion(), value1, value2))
 }
 
 func testAccStackSetInstanceConfig_retain(rName string, retainStack bool) string {
 	return acctest.ConfigCompose(testAccStackSetInstanceBaseConfig(rName), fmt.Sprintf(`
 resource "aws_cloudformation_stack_set_instance" "test" {
-  depends_on = [aws_iam_role_policy.Administration, aws_iam_role_policy.Execution]
-
-  retain_stack   = %[1]t
+  depends_on     = [aws_iam_role_policy.Administration, aws_iam_role_policy.Execution]
+  regions        = [%[1]q, %[2]q]
+  retain_stack   = %[3]t
   stack_set_name = aws_cloudformation_stack_set.test.name
 }
-`, retainStack))
+`, acctest.Region(), acctest.AlternateRegion(), retainStack))
 }
 
 func testAccStackSetInstanceBaseConfig_ServiceManagedStackSet(rName string) string {
@@ -896,17 +896,17 @@ TEMPLATE
 }
 
 func testAccStackSetInstanceConfig_deploymentTargets(rName string) string {
-	return acctest.ConfigCompose(testAccStackSetInstanceBaseConfig_ServiceManagedStackSet(rName), `
+	return acctest.ConfigCompose(testAccStackSetInstanceBaseConfig_ServiceManagedStackSet(rName), fmt.Sprintf(`
 resource "aws_cloudformation_stack_set_instance" "test" {
   depends_on = [aws_iam_role_policy.Administration, aws_iam_role_policy.Execution]
-
+  regions    = [%[1]q, %[2]q]
   deployment_targets {
     organizational_unit_ids = [data.aws_organizations_organization.test.roots[0].id]
   }
 
   stack_set_name = aws_cloudformation_stack_set.test.name
 }
-`)
+`, acctest.Region(), acctest.AlternateRegion()))
 }
 
 func testAccStackSetInstanceConfig_DeploymentTargets_emptyOU(rName string) string {
@@ -918,21 +918,21 @@ resource "aws_organizations_organizational_unit" "test" {
 
 resource "aws_cloudformation_stack_set_instance" "test" {
   depends_on = [aws_iam_role_policy.Administration, aws_iam_role_policy.Execution]
-
+  regions    = [%[2]q, %[3]q]
   deployment_targets {
     organizational_unit_ids = [aws_organizations_organizational_unit.test.id]
   }
 
   stack_set_name = aws_cloudformation_stack_set.test.name
 }
-`, rName))
+`, rName, acctest.Region(), acctest.AlternateRegion()))
 }
 
 func testAccStackSetInstanceConfig_operationPreferences(rName string) string {
-	return acctest.ConfigCompose(testAccStackSetInstanceBaseConfig_ServiceManagedStackSet(rName), `
+	return acctest.ConfigCompose(testAccStackSetInstanceBaseConfig_ServiceManagedStackSet(rName), fmt.Sprintf(`
 resource "aws_cloudformation_stack_set_instance" "test" {
   depends_on = [aws_iam_role_policy.Administration, aws_iam_role_policy.Execution]
-
+  regions    = [%[1]q, %[2]q]
   operation_preferences {
     failure_tolerance_count = 1
     max_concurrent_count    = 10
@@ -944,21 +944,21 @@ resource "aws_cloudformation_stack_set_instance" "test" {
 
   stack_set_name = aws_cloudformation_stack_set.test.name
 }
-`)
+`, acctest.Region(), acctest.AlternateRegion()))
 }
 
 func testAccStackSetInstanceConfig_delegatedAdministrator(rName string) string {
-	return acctest.ConfigCompose(testAccStackSetConfig_delegatedAdministrator(rName), `
+	return acctest.ConfigCompose(testAccStackSetConfig_delegatedAdministrator(rName), fmt.Sprintf(`
 data "aws_organizations_organization" "test" {}
 
 resource "aws_cloudformation_stack_set_instance" "test" {
   call_as = "DELEGATED_ADMIN"
-
+  regions = [%[1]q, %[2]q]
   deployment_targets {
     organizational_unit_ids = [data.aws_organizations_organization.test.roots[0].id]
   }
 
   stack_set_name = aws_cloudformation_stack_set.test.name
 }
-`)
+`, acctest.Region(), acctest.AlternateRegion()))
 }

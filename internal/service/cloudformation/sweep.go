@@ -87,7 +87,7 @@ func sweepStackSetInstances(region string) error {
 
 					r := ResourceStackSetInstance()
 					d := r.Data(nil)
-					id := StackSetInstanceCreateResourceID(stackSetID, accountOrOrgID, aws.StringValue(v.Region))
+					id := StackSetInstanceCreateResourceID(stackSetID, accountOrOrgID, []string{aws.StringValue(v.Region)})
 					d.SetId(id)
 					d.Set("call_as", cloudformation.CallAsSelf)
 					if ouID != "" {

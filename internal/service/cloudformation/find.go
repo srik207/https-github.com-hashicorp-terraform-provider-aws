@@ -39,9 +39,9 @@ func FindChangeSetByStackIDAndChangeSetName(ctx context.Context, conn *cloudform
 	return output, nil
 }
 
-func FindStackInstanceSummariesByOrgIDs(ctx context.Context, conn *cloudformation.CloudFormation, stackSetName, region, callAs string, orgIDs []string) ([]*cloudformation.StackInstanceSummary, error) {
+func FindStackInstanceSummariesByOrgIDs(ctx context.Context, conn *cloudformation.CloudFormation, stackSetName string, region []string, callAs string, orgIDs []string) ([]*cloudformation.StackInstanceSummary, error) {
 	input := &cloudformation.ListStackInstancesInput{
-		StackInstanceRegion: aws.String(region),
+		StackInstanceRegion: aws.String(region[0]),
 		StackSetName:        aws.String(stackSetName),
 	}
 
@@ -85,10 +85,10 @@ func FindStackInstanceSummariesByOrgIDs(ctx context.Context, conn *cloudformatio
 	return result, nil
 }
 
-func FindStackInstanceByName(ctx context.Context, conn *cloudformation.CloudFormation, stackSetName, accountID, region, callAs string) (*cloudformation.StackInstance, error) {
+func FindStackInstanceByName(ctx context.Context, conn *cloudformation.CloudFormation, stackSetName, accountID string, region []string, callAs string) (*cloudformation.StackInstance, error) {
 	input := &cloudformation.DescribeStackInstanceInput{
 		StackInstanceAccount: aws.String(accountID),
-		StackInstanceRegion:  aws.String(region),
+		StackInstanceRegion:  aws.String(region[0]),
 		StackSetName:         aws.String(stackSetName),
 	}
 
