@@ -146,7 +146,7 @@ func (p *servicePackage) SDKResources(ctx context.Context) []*types.ServicePacka
 			},
 		},
 		{
-			Factory:  ResourceIdcApplication,
+			Factory:  resourceIdcApplication,
 			TypeName: "aws_redshift_idc_application",
 			Name:     "IDC Application",
 			Tags: &types.ServicePackageResourceTags{
@@ -154,7 +154,7 @@ func (p *servicePackage) SDKResources(ctx context.Context) []*types.ServicePacka
 			},
 		},
 		{
-			Factory:  ResourceParameterGroup,
+			Factory:  resourceParameterGroup,
 			TypeName: "aws_redshift_parameter_group",
 			Name:     "Parameter Group",
 			Tags: &types.ServicePackageResourceTags{
