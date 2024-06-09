@@ -60,6 +60,7 @@ const (
 	DevOpsGuruEndpointID                 = "devops-guru"
 	DLMEndpointID                        = "dlm"
 	ECREndpointID                        = "api.ecr"
+	EC2EndpointID                        = "ec2"
 	EKSEndpointID                        = "eks"
 	EMREndpointID                        = "elasticmapreduce"
 	EventsEndpointID                     = "events"
