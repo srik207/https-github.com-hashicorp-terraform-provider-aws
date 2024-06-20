@@ -48,9 +48,9 @@ func TestAccIAMUserPolicy_basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckUserPolicyExists(ctx, resourceName, &userPolicy),
 					testAccCheckUserPolicyExpectedPolicies(ctx, userResourceName, 1),
-					resource.TestCheckResourceAttr(resourceName, "name", rName),
-					resource.TestCheckResourceAttr(resourceName, "name_prefix", ""),
-					resource.TestCheckResourceAttr(resourceName, "policy", policy1),
+					resource.TestCheckResourceAttr(resourceName, names.AttrName, rName),
+					resource.TestCheckResourceAttr(resourceName, names.AttrNamePrefix, ""),
+					resource.TestCheckResourceAttr(resourceName, names.AttrPolicy, policy1),
 					resource.TestCheckResourceAttr(resourceName, "user", rName),
 				),
 			},
@@ -64,7 +64,7 @@ func TestAccIAMUserPolicy_basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckUserPolicyExists(ctx, resourceName, &userPolicy),
 					testAccCheckUserPolicyExpectedPolicies(ctx, userResourceName, 1),
-					resource.TestCheckResourceAttr(resourceName, "policy", policy2),
+					resource.TestCheckResourceAttr(resourceName, names.AttrPolicy, policy2),
 				),
 			},
 		},
@@ -115,8 +115,8 @@ func TestAccIAMUserPolicy_nameGenerated(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckUserPolicyExists(ctx, resourceName, &userPolicy),
 					testAccCheckUserPolicyExpectedPolicies(ctx, userResourceName, 1),
-					acctest.CheckResourceAttrNameGenerated(resourceName, "name"),
-					resource.TestCheckResourceAttr(resourceName, "name_prefix", id.UniqueIdPrefix),
+					acctest.CheckResourceAttrNameGenerated(resourceName, names.AttrName),
+					resource.TestCheckResourceAttr(resourceName, names.AttrNamePrefix, id.UniqueIdPrefix),
 				),
 			},
 			{
@@ -147,8 +147,8 @@ func TestAccIAMUserPolicy_namePrefix(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckUserPolicyExists(ctx, resourceName, &userPolicy),
 					testAccCheckUserPolicyExpectedPolicies(ctx, userResourceName, 1),
-					acctest.CheckResourceAttrNameFromPrefix(resourceName, "name", "tf-acc-test-prefix-"),
-					resource.TestCheckResourceAttr(resourceName, "name_prefix", "tf-acc-test-prefix-"),
+					acctest.CheckResourceAttrNameFromPrefix(resourceName, names.AttrName, "tf-acc-test-prefix-"),
+					resource.TestCheckResourceAttr(resourceName, names.AttrNamePrefix, "tf-acc-test-prefix-"),
 				),
 			},
 			{
@@ -182,8 +182,8 @@ func TestAccIAMUserPolicy_multiplePolicies(t *testing.T) {
 					testAccCheckUserPolicyExists(ctx, resourceName1, &userPolicy),
 					testAccCheckUserPolicyExists(ctx, resourceName2, &userPolicy),
 					testAccCheckUserPolicyExpectedPolicies(ctx, userResourceName, 2),
-					resource.TestCheckResourceAttr(resourceName1, "policy", policy1),
-					resource.TestCheckResourceAttr(resourceName2, "policy", policy2),
+					resource.TestCheckResourceAttr(resourceName1, names.AttrPolicy, policy1),
+					resource.TestCheckResourceAttr(resourceName2, names.AttrPolicy, policy2),
 				),
 			},
 			{
@@ -192,8 +192,8 @@ func TestAccIAMUserPolicy_multiplePolicies(t *testing.T) {
 					testAccCheckUserPolicyExists(ctx, resourceName1, &userPolicy),
 					testAccCheckUserPolicyExists(ctx, resourceName2, &userPolicy),
 					testAccCheckUserPolicyExpectedPolicies(ctx, userResourceName, 2),
-					resource.TestCheckResourceAttr(resourceName1, "policy", policy2),
-					resource.TestCheckResourceAttr(resourceName2, "policy", policy2),
+					resource.TestCheckResourceAttr(resourceName1, names.AttrPolicy, policy2),
+					resource.TestCheckResourceAttr(resourceName2, names.AttrPolicy, policy2),
 				),
 			},
 		},
