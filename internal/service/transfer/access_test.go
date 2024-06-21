@@ -198,10 +198,10 @@ func testAccAccess_PolicySize_exceeded(t *testing.T) {
 				Config: testAccAccessConfig_long_policy(rName, 2048-1),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckAccessExists(ctx, resourceName, &conf),
-					resource.TestCheckResourceAttr(resourceName, "external_id", "S-1-1-12-1234567890-123456789-1234567890-1234"),
+					resource.TestCheckResourceAttr(resourceName, names.AttrExternalID, "S-1-1-12-1234567890-123456789-1234567890-1234"),
 					resource.TestCheckResourceAttr(resourceName, "home_directory", "/"+rName+"/"),
 					resource.TestCheckResourceAttr(resourceName, "home_directory_type", "PATH"),
-					resource.TestCheckResourceAttrSet(resourceName, "role"),
+					resource.TestCheckResourceAttrSet(resourceName, names.AttrRole),
 				),
 			},
 		},

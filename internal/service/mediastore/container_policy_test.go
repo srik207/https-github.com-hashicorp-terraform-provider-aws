@@ -107,7 +107,7 @@ func TestAccMediaStoreContainerPolicy_PolicySize_exceeded(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckContainerPolicyExists(ctx, resourceName),
 					resource.TestCheckResourceAttrSet(resourceName, "container_name"),
-					resource.TestCheckResourceAttrSet(resourceName, "policy"),
+					resource.TestCheckResourceAttrSet(resourceName, names.AttrPolicy),
 				),
 			},
 		},

@@ -243,7 +243,7 @@ func TestAccIAMRolePolicy_PolicySize_exceeded(t *testing.T) {
 				Config: testAccRolePolicyConfig_long_policy(rName, 10240-1),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRolePolicyExists(ctx, resourceName, &rolePolicy1),
-					resource.TestCheckResourceAttr(resourceName, "name", rName),
+					resource.TestCheckResourceAttr(resourceName, names.AttrName, rName),
 				),
 			},
 		},
