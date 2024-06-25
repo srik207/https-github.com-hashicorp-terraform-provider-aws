@@ -39,6 +39,20 @@ func resourceJobTemplate() *schema.Resource {
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 
+		Schema: map[string]*schema.Schema{
+			names.AttrARN: {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			names.AttrDescription: {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			names.AttrName: {
+				Type:     schema.TypeString,
+				Required: true,
+				ForceNew: true,
+			},
 		  "acceleration_settings": {
 			  Type:     schema.TypeList,
 				Optional: true,
@@ -51,15 +65,7 @@ func resourceJobTemplate() *schema.Resource {
 						},
 					},
 		  },
-			"arn": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"category": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
@@ -80,11 +86,6 @@ func resourceJobTemplate() *schema.Resource {
 						Required: true,
 					},
 				},
-			},
-			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
 			},
 			"priority": {
 				Type:     schema.TypeInt,
@@ -1094,7 +1095,7 @@ func resourceJobTemplate() *schema.Resource {
 			"status_update_interval": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: enum.Validate[types.Status UpdateInterval](),
+				ValidateDiagFunc: enum.Validate[types.StatusUpdateInterval](),
 			},
 			names.AttrTags:    tftags.TagsSchema(),
 			names.AttrTagsAll: tftags.TagsSchemaComputed(),
@@ -1104,7 +1105,7 @@ func resourceJobTemplate() *schema.Resource {
 	}
 }
 
-func resourceJobTemplateCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceJobTemplateCreate(ctx context.Context, d *schema.ResourceData, meta interface{} ) diag.Diagnostics {
 	var diags diag.Diagnostics
 	conn := meta.(*conns.AWSClient).MediaConvertClient(ctx)
 
@@ -1113,7 +1114,7 @@ func resourceJobTemplateCreate(ctx context.Context, d *schema.ResourceData, meta
 		Name:        aws.String(name),
 		Settings:    types.JobTemplateSettings(d.Get("settings").(string)),
 		Tags:        getTagsIn(ctx),
-		Queue:			 aws.String(v.(string))
+		Queue:			 aws.String(v.(string)),
 	}
 
 	if v, ok := d.GetOk("description"); ok {
@@ -1181,7 +1182,7 @@ func resourceJobTemplateUpdate(ctx context.Context, d *schema.ResourceData, meta
 			Status: types.JobTemplateStatus(d.Get("status").(string)),
 		}
 
-		if v, ok := d.GetOk("description"); ok {
+		if v, ok := d.GetOk(names.AttrDescription); ok {
 			input.Description = aws.String(v.(string))
 		}
 
