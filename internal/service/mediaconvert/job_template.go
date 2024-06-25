@@ -1,4 +1,4 @@
-"metadata_// Copyright (c) HashiCorp, Inc.
+// Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: MPL-2.0
 
 package mediaconvert
