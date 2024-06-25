@@ -8,6 +8,5 @@ var (
 	ResourceQueue       = resourceQueue
 	ResourceJobTemplate = resourceJobTemplate
 
-	FindQueueByName       = findQueueByName
-
+	FindQueueByName = findQueueByName
 )
