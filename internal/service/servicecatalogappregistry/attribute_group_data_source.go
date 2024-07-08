@@ -5,6 +5,8 @@ package servicecatalogappregistry
 
 import (
 	"context"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -20,6 +22,7 @@ import (
 
 // Function annotations are used for datasource registration to the Provider. DO NOT EDIT.
 // @FrameworkDataSource("aws_servicecatalogappregistry_attribute_group", name="Attribute Group")
+// @Tags(identifierAttribute="arn")
 func newDataSourceAttributeGroup(context.Context) (datasource.DataSourceWithConfigure, error) {
 	return &dataSourceAttributeGroup{}, nil
 }
@@ -41,7 +44,8 @@ func (d *dataSourceAttributeGroup) Schema(ctx context.Context, req datasource.Sc
 		Attributes: map[string]schema.Attribute{
 			names.AttrARN: framework.ARNAttributeComputedOnly(),
 			names.AttrAttributes: schema.StringAttribute{
-				Computed: true,
+				Computed:   true,
+				CustomType: jsontypes.NormalizedType{},
 			},
 			names.AttrDescription: schema.StringAttribute{
 				Optional: true,
@@ -50,22 +54,21 @@ func (d *dataSourceAttributeGroup) Schema(ctx context.Context, req datasource.Sc
 				Optional: true,
 				Computed: true,
 				Validators: []validator.String{
-					stringvalidator.AtLeastOneOf(path.Expressions{
-						path.MatchRoot(names.AttrName),
-					}...),
+					stringvalidator.AtLeastOneOf(path.MatchRoot(names.AttrName), path.MatchRoot(names.AttrARN)),
 				},
 			},
 			names.AttrName: schema.StringAttribute{
 				Optional: true,
 				Computed: true,
 			},
-			names.AttrTags: tftags.TagsAttribute(),
+			names.AttrTags: tftags.TagsAttributeComputedOnly(),
 		},
 	}
 }
 
 func (d *dataSourceAttributeGroup) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	conn := d.Meta().ServiceCatalogAppRegistryClient(ctx)
+	ignoreTagsConfig := d.Meta().IgnoreTagsConfig
 
 	var data dataSourceAttributeGroupData
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -73,7 +76,17 @@ func (d *dataSourceAttributeGroup) Read(ctx context.Context, req datasource.Read
 		return
 	}
 
-	out, err := findAttributeGroupByID(ctx, conn, data.Name.ValueString())
+	var id string
+
+	if !data.ID.IsNull() {
+		id = data.ID.ValueString()
+	} else if !data.Name.IsNull() {
+		id = data.Name.ValueString()
+	} else if !data.ARN.IsNull() {
+		id = data.ARN.ValueString()
+	}
+
+	out, err := findAttributeGroupByID(ctx, conn, id)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			create.ProblemStandardMessage(names.ServiceCatalogAppRegistry, create.ErrActionReading, DSNameAttributeGroup, data.Name.String(), err),
@@ -87,14 +100,17 @@ func (d *dataSourceAttributeGroup) Read(ctx context.Context, req datasource.Read
 		return
 	}
 
+	// Transparent tagging doesn't work for DataSource yet
+	data.Tags = flex.FlattenFrameworkStringValueMapLegacy(ctx, KeyValueTags(ctx, out.Tags).IgnoreAWS().IgnoreConfig(ignoreTagsConfig).Map())
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 type dataSourceAttributeGroupData struct {
-	ARN         types.String `tfsdk:"arn"`
-	Attributes  types.String `tfsdk:"attributes"`
-	Description types.String `tfsdk:"description"`
-	ID          types.String `tfsdk:"id"`
-	Name        types.String `tfsdk:"name"`
-	Tags        types.Map    `tfsdk:"tags"`
+	ARN         types.String         `tfsdk:"arn"`
+	Attributes  jsontypes.Normalized `tfsdk:"attributes"`
+	Description types.String         `tfsdk:"description"`
+	ID          types.String         `tfsdk:"id"`
+	Name        types.String         `tfsdk:"name"`
+	Tags        types.Map            `tfsdk:"tags"`
 }
