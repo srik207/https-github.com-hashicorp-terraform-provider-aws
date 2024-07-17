@@ -22,6 +22,11 @@ func TestAccServiceCatalog_serial(t *testing.T) {
 			"organizationalUnit": testAccPortfolioShare_organizationalUnit,
 			acctest.CtDisappears: testAccPortfolioShare_disappears,
 		},
+		"PortfolioShareDataSource": {
+			"basic":           testAccPortfolioShareData_basic,
+			"sharePrincipals": testAccPortfolioShareData_sharePrincipals,
+			"disappears":      testAccPortfolioShareData_disappears,
+		},
 	}
 
 	acctest.RunSerialTests2Levels(t, testCases, 0)
