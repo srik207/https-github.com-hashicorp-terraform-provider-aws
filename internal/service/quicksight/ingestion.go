@@ -103,10 +103,10 @@ func (r *resourceIngestion) Create(ctx context.Context, req resource.CreateReque
 	plan.ID = types.StringValue(createIngestionID(plan.AWSAccountID.ValueString(), plan.DataSetID.ValueString(), plan.IngestionID.ValueString()))
 
 	in := quicksight.CreateIngestionInput{
-		AwsAccountId:  aws.String(plan.AWSAccountID.ValueString()),
-		DataSetId:     aws.String(plan.DataSetID.ValueString()),
-		IngestionId:   aws.String(plan.IngestionID.ValueString()),
-		IngestionType: aws.String(plan.IngestionType.ValueString()),
+		AwsAccountId:  plan.AWSAccountID.ValueStringPointer(),
+		DataSetId:     plan.DataSetID.ValueStringPointer(),
+		IngestionId:   plan.IngestionID.ValueStringPointer(),
+		IngestionType: plan.IngestionType.ValueStringPointer(),
 	}
 
 	out, err := conn.CreateIngestionWithContext(ctx, &in)
@@ -186,9 +186,9 @@ func (r *resourceIngestion) Delete(ctx context.Context, req resource.DeleteReque
 	}
 
 	_, err := conn.CancelIngestionWithContext(ctx, &quicksight.CancelIngestionInput{
-		AwsAccountId: aws.String(state.AWSAccountID.ValueString()),
-		DataSetId:    aws.String(state.DataSetID.ValueString()),
-		IngestionId:  aws.String(state.IngestionID.ValueString()),
+		AwsAccountId: state.AWSAccountID.ValueStringPointer(),
+		DataSetId:    state.DataSetID.ValueStringPointer(),
+		IngestionId:  state.IngestionID.ValueStringPointer(),
 	})
 	if err != nil {
 		if tfawserr.ErrCodeEquals(err, quicksight.ErrCodeResourceNotFoundException) {

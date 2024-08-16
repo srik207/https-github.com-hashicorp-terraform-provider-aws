@@ -286,7 +286,7 @@ func (r *replicationConfigurationTemplateResource) Delete(ctx context.Context, r
 	})
 
 	input := &drs.DeleteReplicationConfigurationTemplateInput{
-		ReplicationConfigurationTemplateID: aws.String(data.ID.ValueString()),
+		ReplicationConfigurationTemplateID: data.ID.ValueStringPointer(),
 	}
 
 	_, err := tfresource.RetryWhenAWSErrCodeEquals(ctx, 5*time.Minute, func() (interface{}, error) {

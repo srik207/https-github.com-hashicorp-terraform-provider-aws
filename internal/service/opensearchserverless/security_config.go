@@ -209,7 +209,7 @@ func (r *resourceSecurityConfig) Update(ctx context.Context, req resource.Update
 	}
 
 	if !plan.Description.Equal(state.Description) {
-		input.Description = aws.String(plan.Description.ValueString())
+		input.Description = plan.Description.ValueStringPointer()
 		update = true
 	}
 

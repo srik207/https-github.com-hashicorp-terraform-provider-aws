@@ -69,10 +69,10 @@ func (r *resourceAccountRegistration) Create(ctx context.Context, req resource.C
 
 	in := auditmanager.RegisterAccountInput{}
 	if !plan.DelegatedAdminAccount.IsNull() {
-		in.DelegatedAdminAccount = aws.String(plan.DelegatedAdminAccount.ValueString())
+		in.DelegatedAdminAccount = plan.DelegatedAdminAccount.ValueStringPointer()
 	}
 	if !plan.KmsKey.IsNull() {
-		in.KmsKey = aws.String(plan.KmsKey.ValueString())
+		in.KmsKey = plan.KmsKey.ValueStringPointer()
 	}
 	out, err := conn.RegisterAccount(ctx, &in)
 	if err != nil {
@@ -132,10 +132,10 @@ func (r *resourceAccountRegistration) Update(ctx context.Context, req resource.U
 		!plan.KmsKey.Equal(state.KmsKey) {
 		in := auditmanager.RegisterAccountInput{}
 		if !plan.DelegatedAdminAccount.IsNull() {
-			in.DelegatedAdminAccount = aws.String(plan.DelegatedAdminAccount.ValueString())
+			in.DelegatedAdminAccount = plan.DelegatedAdminAccount.ValueStringPointer()
 		}
 		if !plan.KmsKey.IsNull() {
-			in.KmsKey = aws.String(plan.KmsKey.ValueString())
+			in.KmsKey = plan.KmsKey.ValueStringPointer()
 		}
 		out, err := conn.RegisterAccount(ctx, &in)
 		if err != nil {

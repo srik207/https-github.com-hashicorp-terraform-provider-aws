@@ -90,7 +90,7 @@ func (d *dataSourceTemplates) Read(ctx context.Context, req datasource.ReadReque
 	}
 
 	input := servicequotas.ListServiceQuotaIncreaseRequestsInTemplateInput{
-		AwsRegion: aws.String(data.Region.ValueString()),
+		AwsRegion: data.Region.ValueStringPointer(),
 	}
 	out, err := conn.ListServiceQuotaIncreaseRequestsInTemplate(ctx, &input)
 	if err != nil {

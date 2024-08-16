@@ -75,7 +75,7 @@ func (d *dataSourceApplicationAssignments) Read(ctx context.Context, req datasou
 	}
 
 	paginator := ssoadmin.NewListApplicationAssignmentsPaginator(conn, &ssoadmin.ListApplicationAssignmentsInput{
-		ApplicationArn: aws.String(data.ApplicationARN.ValueString()),
+		ApplicationArn: data.ApplicationARN.ValueStringPointer(),
 	})
 
 	var out ssoadmin.ListApplicationAssignmentsOutput

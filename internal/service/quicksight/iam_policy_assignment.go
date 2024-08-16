@@ -129,10 +129,10 @@ func (r *resourceIAMPolicyAssignment) Create(ctx context.Context, req resource.C
 	plan.ID = types.StringValue(createIAMPolicyAssignmentID(plan.AWSAccountID.ValueString(), plan.Namespace.ValueString(), plan.AssignmentName.ValueString()))
 
 	in := quicksight.CreateIAMPolicyAssignmentInput{
-		AwsAccountId:     aws.String(plan.AWSAccountID.ValueString()),
-		Namespace:        aws.String(plan.Namespace.ValueString()),
-		AssignmentName:   aws.String(plan.AssignmentName.ValueString()),
-		AssignmentStatus: aws.String(plan.AssignmentStatus.ValueString()),
+		AwsAccountId:     plan.AWSAccountID.ValueStringPointer(),
+		Namespace:        plan.Namespace.ValueStringPointer(),
+		AssignmentName:   plan.AssignmentName.ValueStringPointer(),
+		AssignmentStatus: plan.AssignmentStatus.ValueStringPointer(),
 	}
 
 	if !plan.Identities.IsNull() {
@@ -144,7 +144,7 @@ func (r *resourceIAMPolicyAssignment) Create(ctx context.Context, req resource.C
 		in.Identities = expandIdentities(ctx, identities)
 	}
 	if !plan.PolicyARN.IsNull() {
-		in.PolicyArn = aws.String(plan.PolicyARN.ValueString())
+		in.PolicyArn = plan.PolicyARN.ValueStringPointer()
 	}
 
 	out, err := conn.CreateIAMPolicyAssignmentWithContext(ctx, &in)
@@ -239,10 +239,10 @@ func (r *resourceIAMPolicyAssignment) Update(ctx context.Context, req resource.U
 		!plan.Identities.Equal(state.Identities) ||
 		!plan.PolicyARN.Equal(state.PolicyARN) {
 		in := quicksight.UpdateIAMPolicyAssignmentInput{
-			AwsAccountId:     aws.String(plan.AWSAccountID.ValueString()),
-			Namespace:        aws.String(plan.Namespace.ValueString()),
-			AssignmentName:   aws.String(plan.AssignmentName.ValueString()),
-			AssignmentStatus: aws.String(plan.AssignmentStatus.ValueString()),
+			AwsAccountId:     plan.AWSAccountID.ValueStringPointer(),
+			Namespace:        plan.Namespace.ValueStringPointer(),
+			AssignmentName:   plan.AssignmentName.ValueStringPointer(),
+			AssignmentStatus: plan.AssignmentStatus.ValueStringPointer(),
 		}
 
 		if !plan.Identities.IsNull() {
@@ -254,7 +254,7 @@ func (r *resourceIAMPolicyAssignment) Update(ctx context.Context, req resource.U
 			in.Identities = expandIdentities(ctx, identities)
 		}
 		if !plan.PolicyARN.IsNull() {
-			in.PolicyArn = aws.String(plan.PolicyARN.ValueString())
+			in.PolicyArn = plan.PolicyARN.ValueStringPointer()
 		}
 
 		out, err := conn.UpdateIAMPolicyAssignmentWithContext(ctx, &in)
@@ -288,9 +288,9 @@ func (r *resourceIAMPolicyAssignment) Delete(ctx context.Context, req resource.D
 	}
 
 	_, err := conn.DeleteIAMPolicyAssignmentWithContext(ctx, &quicksight.DeleteIAMPolicyAssignmentInput{
-		AwsAccountId:   aws.String(state.AWSAccountID.ValueString()),
-		Namespace:      aws.String(state.Namespace.ValueString()),
-		AssignmentName: aws.String(state.AssignmentName.ValueString()),
+		AwsAccountId:   state.AWSAccountID.ValueStringPointer(),
+		Namespace:      state.Namespace.ValueStringPointer(),
+		AssignmentName: state.AssignmentName.ValueStringPointer(),
 	})
 	if err != nil {
 		if tfawserr.ErrCodeEquals(err, quicksight.ErrCodeResourceNotFoundException) {

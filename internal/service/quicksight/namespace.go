@@ -119,9 +119,9 @@ func (r *resourceNamespace) Create(ctx context.Context, req resource.CreateReque
 	plan.ID = types.StringValue(createNamespaceID(plan.AWSAccountID.ValueString(), plan.Namespace.ValueString()))
 
 	in := quicksight.CreateNamespaceInput{
-		AwsAccountId:  aws.String(plan.AWSAccountID.ValueString()),
-		Namespace:     aws.String(plan.Namespace.ValueString()),
-		IdentityStore: aws.String(plan.IdentityStore.ValueString()),
+		AwsAccountId:  plan.AWSAccountID.ValueStringPointer(),
+		Namespace:     plan.Namespace.ValueStringPointer(),
+		IdentityStore: plan.IdentityStore.ValueStringPointer(),
 		Tags:          getTagsIn(ctx),
 	}
 
@@ -224,8 +224,8 @@ func (r *resourceNamespace) Delete(ctx context.Context, req resource.DeleteReque
 	}
 
 	_, err := conn.DeleteNamespaceWithContext(ctx, &quicksight.DeleteNamespaceInput{
-		AwsAccountId: aws.String(state.AWSAccountID.ValueString()),
-		Namespace:    aws.String(state.Namespace.ValueString()),
+		AwsAccountId: state.AWSAccountID.ValueStringPointer(),
+		Namespace:    state.Namespace.ValueStringPointer(),
 	})
 	if err != nil {
 		if tfawserr.ErrCodeEquals(err, quicksight.ErrCodeResourceNotFoundException) {

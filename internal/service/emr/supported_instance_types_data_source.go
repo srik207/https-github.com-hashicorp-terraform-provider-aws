@@ -99,7 +99,7 @@ func (d *dataSourceSupportedInstanceTypes) Read(ctx context.Context, req datasou
 	data.ID = types.StringValue(data.ReleaseLabel.ValueString())
 
 	input := &emr.ListSupportedInstanceTypesInput{
-		ReleaseLabel: aws.String(data.ReleaseLabel.ValueString()),
+		ReleaseLabel: data.ReleaseLabel.ValueStringPointer(),
 	}
 
 	var results []awstypes.SupportedInstanceType

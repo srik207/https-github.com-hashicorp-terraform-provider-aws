@@ -74,7 +74,7 @@ func (d *dataSourceSecretVersions) Read(ctx context.Context, req datasource.Read
 	}
 
 	paginator := secretsmanager.NewListSecretVersionIdsPaginator(conn, &secretsmanager.ListSecretVersionIdsInput{
-		SecretId: aws.String(data.SecretID.ValueString()),
+		SecretId: data.SecretID.ValueStringPointer(),
 	})
 
 	var out secretsmanager.ListSecretVersionIdsOutput
