@@ -564,7 +564,7 @@ Define FLatten and EXpand (i.e., flex) functions at the _most local level_ possi
 
     ```go
     input := service.ExampleOperationInput{
-        AttributeName: aws.String(plan.AttributeName.ValueBool())
+        AttributeName: plan.AttributeName.ValueBoolPointer()
     }
     ```
     
@@ -584,7 +584,7 @@ Define FLatten and EXpand (i.e., flex) functions at the _most local level_ possi
     input := service.ExampleOperationInput{}
     
     if !plan.AttributeName.IsUnknown() && !plan.AttributeName.IsNull() {
-        input.AttributeName = aws.Bool(plan.AttributeName.ValueBool())
+        input.AttributeName = plan.AttributeName.ValueBoolPointer()
     }
     ```
     
@@ -628,7 +628,7 @@ Define FLatten and EXpand (i.e., flex) functions at the _most local level_ possi
     input := service.ExampleOperationInput{}
     
     if !plan.AttributeName.IsNull() {
-        input.AttributeName = aws.Float64(plan.AttributeName.ValueFloat64())
+        input.AttributeName = plan.AttributeName.ValueFloat64Pointer()
     }
     ```
     
@@ -664,7 +664,7 @@ Define FLatten and EXpand (i.e., flex) functions at the _most local level_ possi
     input := service.ExampleOperationInput{}
     
     if !plan.AttributeName.IsNull() {
-        input.AttributeName = aws.Int64(plan.AttributeName.ValueInt64())
+        input.AttributeName = plan.AttributeName.ValueInt64Pointer()
     }
     ```
     
@@ -953,7 +953,7 @@ Define FLatten and EXpand (i.e., flex) functions at the _most local level_ possi
     input := service.ExampleOperationInput{}
     
     if !plan.AttributeName.IsNull() {
-        input.AttributeName = aws.String(plan.AttributeName.ValueString())
+        input.AttributeName = plan.AttributeName.ValueStringPointer()
     }
     ```
     
@@ -1045,7 +1045,7 @@ Define FLatten and EXpand (i.e., flex) functions at the _most local level_ possi
     func expandStructure(tfList []structureData) *service.Structure {
         // ...
 
-        apiObject.NestedAttributeName = aws.Bool(tfObj.NestedAttributeName.ValueBool())
+        apiObject.NestedAttributeName = tfObj.NestedAttributeName.ValueBoolPointer()
 
         // ...
     }
@@ -1058,7 +1058,7 @@ Define FLatten and EXpand (i.e., flex) functions at the _most local level_ possi
         // ...
 
         if !tfObj.NestedAttributeName.IsUnknown() && !tfObj.NestedAttributeName.IsNull() {
-            apiObject.NestedAttributeName = aws.Bool(tfObj.NestedAttributeName.ValueBool())
+            apiObject.NestedAttributeName = tfObj.NestedAttributeName.ValueBoolPointer()
         }
 
         // ...
@@ -1131,7 +1131,7 @@ Define FLatten and EXpand (i.e., flex) functions at the _most local level_ possi
         // ...
 
         if !tfObj.NestedAttributeName.IsUnknown() && !tfObj.NestedAttributeName.IsNull() {
-            apiObject.NestedAttributeName = aws.Float64(tfObj.NestedAttributeName.ValueFloat64())
+            apiObject.NestedAttributeName = tfObj.NestedAttributeName.ValueFloat64Pointer()
         }
 
         // ...
@@ -1190,7 +1190,7 @@ Define FLatten and EXpand (i.e., flex) functions at the _most local level_ possi
         // ...
 
         if !tfObj.NestedAttributeName.IsUnknown() && !tfObj.NestedAttributeName.IsNull() {
-            apiObject.NestedAttributeName = aws.Int64(tfObj.NestedAttributeName.ValueInt64())
+            apiObject.NestedAttributeName = tfObj.NestedAttributeName.ValueInt64Pointer()
         }
 
         // ...
@@ -1605,7 +1605,7 @@ Define FLatten and EXpand (i.e., flex) functions at the _most local level_ possi
         // ...
 
         if !tfObj.NestedAttributeName.IsUnknown() && !tfObj.NestedAttributeName.IsNull() {
-            apiObject.NestedAttributeName = aws.String(tfObj.NestedAttributeName.ValueString())
+            apiObject.NestedAttributeName = tfObj.NestedAttributeName.ValueStringPointer()
         }
 
         // ...
