@@ -5412,7 +5412,7 @@ service "lexmodels" {
 
   sdk {
     id             = "Lex Model Building Service"
-    client_version = [1]
+    client_version = [2]
   }
 
   names {
@@ -5755,7 +5755,7 @@ service "macie2" {
 
   sdk {
     id             = "Macie2"
-    client_version = [1]
+    client_version = [2]
   }
 
   names {
