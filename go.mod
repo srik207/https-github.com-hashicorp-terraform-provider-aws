@@ -11,7 +11,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.27.28
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.28
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.12
-	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.17.11
+	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.17.12
 	github.com/aws/aws-sdk-go-v2/service/accessanalyzer v1.32.4
 	github.com/aws/aws-sdk-go-v2/service/account v1.19.4
 	github.com/aws/aws-sdk-go-v2/service/acm v1.28.5
@@ -97,7 +97,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.175.1
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.32.1
 	github.com/aws/aws-sdk-go-v2/service/ecrpublic v1.25.4
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.45.0
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.45.1
 	github.com/aws/aws-sdk-go-v2/service/efs v1.31.4
 	github.com/aws/aws-sdk-go-v2/service/eks v1.48.1
 	github.com/aws/aws-sdk-go-v2/service/elasticache v1.40.6
@@ -161,13 +161,14 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/memorydb v1.21.6
 	github.com/aws/aws-sdk-go-v2/service/mq v1.25.4
 	github.com/aws/aws-sdk-go-v2/service/mwaa v1.29.5
+	github.com/aws/aws-sdk-go-v2/service/neptune v1.33.4
 	github.com/aws/aws-sdk-go-v2/service/neptunegraph v1.11.1
 	github.com/aws/aws-sdk-go-v2/service/networkfirewall v1.41.1
 	github.com/aws/aws-sdk-go-v2/service/networkmanager v1.29.4
 	github.com/aws/aws-sdk-go-v2/service/networkmonitor v1.5.4
 	github.com/aws/aws-sdk-go-v2/service/oam v1.13.5
 	github.com/aws/aws-sdk-go-v2/service/opensearch v1.39.3
-	github.com/aws/aws-sdk-go-v2/service/opensearchserverless v1.13.4
+	github.com/aws/aws-sdk-go-v2/service/opensearchserverless v1.14.0
 	github.com/aws/aws-sdk-go-v2/service/opsworks v1.24.4
 	github.com/aws/aws-sdk-go-v2/service/organizations v1.30.3
 	github.com/aws/aws-sdk-go-v2/service/osis v1.12.4
@@ -199,7 +200,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/route53recoveryreadiness v1.19.4
 	github.com/aws/aws-sdk-go-v2/service/route53resolver v1.30.4
 	github.com/aws/aws-sdk-go-v2/service/rum v1.19.4
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.59.0
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.60.0
 	github.com/aws/aws-sdk-go-v2/service/s3control v1.46.4
 	github.com/aws/aws-sdk-go-v2/service/s3outposts v1.26.4
 	github.com/aws/aws-sdk-go-v2/service/sagemaker v1.154.0
@@ -246,7 +247,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/xray v1.27.4
 	github.com/aws/smithy-go v1.20.4
 	github.com/beevik/etree v1.4.1
-	github.com/cedar-policy/cedar-go v0.0.0-20240318205125-470d1fe984bb
+	github.com/cedar-policy/cedar-go v0.1.0
 	github.com/davecgh/go-spew v1.1.1
 	github.com/dlclark/regexp2 v1.11.4
 	github.com/gertd/go-pluralize v0.2.1
