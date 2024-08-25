@@ -1088,7 +1088,7 @@ func TestAccELBV2Listener_Protocol_httpsTohttp(t *testing.T) {
 				},
 			},
 			{
-				Config: testAccListenerConfig_httpsToHttp(rName),
+				Config: testAccListenerConfig_httpsTohttp(rName),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					testAccCheckListenerExists(ctx, resourceName, &conf),
 					resource.TestCheckResourceAttr("aws_lb.test", "load_balancer_type", "application"),
