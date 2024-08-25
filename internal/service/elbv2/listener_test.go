@@ -1044,7 +1044,7 @@ func TestAccELBV2Listener_Protocol_https(t *testing.T) {
 	})
 }
 
-func TestAccELBV2Listener_Protocol_httpsToHttp(t *testing.T) {
+func TestAccELBV2Listener_Protocol_httpsTohttp(t *testing.T) {
 	ctx := acctest.Context(t)
 	var conf awstypes.Listener
 	key := acctest.TLSRSAPrivateKeyPEM(t, 2048)
@@ -2942,7 +2942,7 @@ resource "aws_internet_gateway" "test" {
 `, rName, acctest.TLSPEMEscapeNewlines(certificate), acctest.TLSPEMEscapeNewlines(key)))
 }
 
-func testAccListenerConfig_httpsToHttp(rName string) string {
+func testAccListenerConfig_httpsTohttp(rName string) string {
 	return acctest.ConfigCompose(testAccListenerConfig_base(rName), fmt.Sprintf(`
 resource "aws_lb_listener" "test" {
   load_balancer_arn = aws_lb.test.id
