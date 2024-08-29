@@ -101,10 +101,10 @@ func (r *resourceFolderMembership) Create(ctx context.Context, req resource.Crea
 	))
 
 	in := &quicksight.CreateFolderMembershipInput{
-		AwsAccountId: aws.String(plan.AWSAccountID.ValueString()),
-		FolderId:     aws.String(plan.FolderID.ValueString()),
-		MemberId:     aws.String(plan.MemberID.ValueString()),
-		MemberType:   aws.String(plan.MemberType.ValueString()),
+		AwsAccountId: plan.AWSAccountID.ValueStringPointer(),
+		FolderId:     plan.FolderID.ValueStringPointer(),
+		MemberId:     plan.MemberID.ValueStringPointer(),
+		MemberType:   plan.MemberType.ValueStringPointer(),
 	}
 
 	out, err := conn.CreateFolderMembershipWithContext(ctx, in)
@@ -181,10 +181,10 @@ func (r *resourceFolderMembership) Delete(ctx context.Context, req resource.Dele
 	}
 
 	in := &quicksight.DeleteFolderMembershipInput{
-		AwsAccountId: aws.String(state.AWSAccountID.ValueString()),
-		FolderId:     aws.String(state.FolderID.ValueString()),
-		MemberId:     aws.String(state.MemberID.ValueString()),
-		MemberType:   aws.String(state.MemberType.ValueString()),
+		AwsAccountId: state.AWSAccountID.ValueStringPointer(),
+		FolderId:     state.FolderID.ValueStringPointer(),
+		MemberId:     state.MemberID.ValueStringPointer(),
+		MemberType:   state.MemberType.ValueStringPointer(),
 	}
 
 	_, err := conn.DeleteFolderMembershipWithContext(ctx, in)

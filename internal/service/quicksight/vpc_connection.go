@@ -169,10 +169,10 @@ func (r *resourceVPCConnection) Create(ctx context.Context, req resource.CreateR
 	plan.ID = types.StringValue(createVPCConnectionID(plan.AWSAccountID.ValueString(), plan.VPCConnectionID.ValueString()))
 
 	in := &quicksight.CreateVPCConnectionInput{
-		AwsAccountId:     aws.String(plan.AWSAccountID.ValueString()),
-		VPCConnectionId:  aws.String(plan.VPCConnectionID.ValueString()),
-		Name:             aws.String(plan.Name.ValueString()),
-		RoleArn:          aws.String(plan.RoleArn.ValueString()),
+		AwsAccountId:     plan.AWSAccountID.ValueStringPointer(),
+		VPCConnectionId:  plan.VPCConnectionID.ValueStringPointer(),
+		Name:             plan.Name.ValueStringPointer(),
+		RoleArn:          plan.RoleArn.ValueStringPointer(),
 		SecurityGroupIds: flex.ExpandFrameworkStringSet(ctx, plan.SecurityGroupIds),
 		SubnetIds:        flex.ExpandFrameworkStringSet(ctx, plan.SubnetIds),
 		Tags:             getTagsIn(ctx),
@@ -285,10 +285,10 @@ func (r *resourceVPCConnection) Update(ctx context.Context, req resource.UpdateR
 		!plan.SecurityGroupIds.Equal(state.SecurityGroupIds) ||
 		!plan.SubnetIds.Equal(state.SubnetIds) {
 		in := quicksight.UpdateVPCConnectionInput{
-			AwsAccountId:     aws.String(plan.AWSAccountID.ValueString()),
-			VPCConnectionId:  aws.String(plan.VPCConnectionID.ValueString()),
-			Name:             aws.String(plan.Name.ValueString()),
-			RoleArn:          aws.String(plan.RoleArn.ValueString()),
+			AwsAccountId:     plan.AWSAccountID.ValueStringPointer(),
+			VPCConnectionId:  plan.VPCConnectionID.ValueStringPointer(),
+			Name:             plan.Name.ValueStringPointer(),
+			RoleArn:          plan.RoleArn.ValueStringPointer(),
 			SecurityGroupIds: flex.ExpandFrameworkStringSet(ctx, plan.SecurityGroupIds),
 			SubnetIds:        flex.ExpandFrameworkStringSet(ctx, plan.SubnetIds),
 		}
@@ -342,8 +342,8 @@ func (r *resourceVPCConnection) Delete(ctx context.Context, req resource.DeleteR
 	}
 
 	in := &quicksight.DeleteVPCConnectionInput{
-		AwsAccountId:    aws.String(state.AWSAccountID.ValueString()),
-		VPCConnectionId: aws.String(state.VPCConnectionID.ValueString()),
+		AwsAccountId:    state.AWSAccountID.ValueStringPointer(),
+		VPCConnectionId: state.VPCConnectionID.ValueStringPointer(),
 	}
 
 	_, err := conn.DeleteVPCConnectionWithContext(ctx, in)

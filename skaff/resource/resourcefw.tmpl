@@ -271,8 +271,8 @@ func (r *resource{{ .Resource }}) Create(ctx context.Context, req resource.Creat
 		// TIP: Mandatory or fields that will always be present can be set when
 		// you create the Input structure. (Replace these with real fields.)
 		{{- end }}
-		{{ .Resource }}Name: aws.String(plan.Name.ValueString()),
-		{{ .Resource }}Type: aws.String(plan.Type.ValueString()),
+		{{ .Resource }}Name: plan.Name.ValueStringPointer(),
+		{{ .Resource }}Type: plan.Type.ValueStringPointer(),
 		{{- if .IncludeTags }}
 		Tags:             getTagsIn(ctx),
 		{{- end }}
@@ -283,7 +283,7 @@ func (r *resource{{ .Resource }}) Create(ctx context.Context, req resource.Creat
 		// TIP: Optional fields should be set based on whether or not they are
 		// used.
 		{{- end }}
-		in.Description = aws.String(plan.Description.ValueString())
+		in.Description = plan.Description.ValueStringPointer()
 	}
 	if !plan.ComplexArgument.IsNull() {
 		{{- if .IncludeComments }}
@@ -472,9 +472,9 @@ func (r *resource{{ .Resource }}) Update(ctx context.Context, req resource.Updat
 			// TIP: Mandatory or fields that will always be present can be set when
 			// you create the Input structure. (Replace these with real fields.)
 			{{- end }}
-			{{ .Resource }}Id:   aws.String(plan.ID.ValueString()),
-			{{ .Resource }}Name: aws.String(plan.Name.ValueString()),
-			{{ .Resource }}Type: aws.String(plan.Type.ValueString()),
+			{{ .Resource }}Id:   plan.ID.ValueStringPointer(),
+			{{ .Resource }}Name: plan.Name.ValueStringPointer(),
+			{{ .Resource }}Type: plan.Type.ValueStringPointer(),
 		}
 
 		if !plan.Description.IsNull() {
@@ -482,7 +482,7 @@ func (r *resource{{ .Resource }}) Update(ctx context.Context, req resource.Updat
 			// TIP: Optional fields should be set based on whether or not they are
 			// used.
 			{{- end }}
-			in.Description = aws.String(plan.Description.ValueString())
+			in.Description = plan.Description.ValueStringPointer()
 		}
 		if !plan.ComplexArgument.IsNull() {
 			{{- if .IncludeComments }}
@@ -580,7 +580,7 @@ func (r *resource{{ .Resource }}) Delete(ctx context.Context, req resource.Delet
 	// TIP: -- 3. Populate a delete input structure
 	{{- end }}
 	in := &{{ .ServiceLower }}.Delete{{ .Resource }}Input{
-		{{ .Resource }}Id: aws.String(state.ID.ValueString()),
+		{{ .Resource }}Id: state.ID.ValueStringPointer(),
 	}
 	{{ if .IncludeComments }}
 	// TIP: -- 4. Call the AWS delete function
@@ -916,10 +916,10 @@ func expandComplexArgument(tfList []complexArgumentData) *{{ .ServiceLower }}.Co
 {{- else }}
 	apiObject := &{{ .ServiceLower }}.ComplexArgument{
 {{- end }}
-		NestedRequired: aws.String(tfObj.NestedRequired.ValueString()),
+		NestedRequired: tfObj.NestedRequired.ValueStringPointer(),
 	}
 	if !tfObj.NestedOptional.IsNull() {
-		apiObject.NestedOptional = aws.String(tfObj.NestedOptional.ValueString())
+		apiObject.NestedOptional = tfObj.NestedOptional.ValueStringPointer()
 	}
 
 	return apiObject
@@ -963,10 +963,10 @@ func expandComplexArguments(tfList []complexArgumentData) []*{{ .ServiceLower }}
 
 	for _, tfObj := range tfList {
 		item := &{{ .ServiceLower }}.ComplexArgument{
-			NestedRequired: aws.String(tfObj.NestedRequired.ValueString()),
+			NestedRequired: tfObj.NestedRequired.ValueStringPointer(),
 		}
 		if !tfObj.NestedOptional.IsNull() {
-			item.NestedOptional = aws.String(tfObj.NestedOptional.ValueString())
+			item.NestedOptional = tfObj.NestedOptional.ValueStringPointer()
 		}
 
 		apiObject = append(apiObject, item)

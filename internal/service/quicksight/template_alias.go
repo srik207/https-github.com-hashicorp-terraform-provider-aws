@@ -91,10 +91,10 @@ func (r *resourceTemplateAlias) Create(ctx context.Context, req resource.CreateR
 		createTemplateAliasID(plan.AWSAccountID.ValueString(), plan.TemplateID.ValueString(), plan.AliasName.ValueString()))
 
 	in := &quicksight.CreateTemplateAliasInput{
-		AliasName:             aws.String(plan.AliasName.ValueString()),
-		AwsAccountId:          aws.String(plan.AWSAccountID.ValueString()),
-		TemplateId:            aws.String(plan.TemplateID.ValueString()),
-		TemplateVersionNumber: aws.Int64(plan.TemplateVersionNumber.ValueInt64()),
+		AliasName:             plan.AliasName.ValueStringPointer(),
+		AwsAccountId:          plan.AWSAccountID.ValueStringPointer(),
+		TemplateId:            plan.TemplateID.ValueStringPointer(),
+		TemplateVersionNumber: plan.TemplateVersionNumber.ValueInt64Pointer(),
 	}
 
 	out, err := conn.CreateTemplateAliasWithContext(ctx, in)
@@ -173,10 +173,10 @@ func (r *resourceTemplateAlias) Update(ctx context.Context, req resource.UpdateR
 
 	if !plan.TemplateVersionNumber.Equal(state.TemplateVersionNumber) {
 		in := &quicksight.UpdateTemplateAliasInput{
-			AliasName:             aws.String(plan.AliasName.ValueString()),
-			AwsAccountId:          aws.String(plan.AWSAccountID.ValueString()),
-			TemplateId:            aws.String(plan.TemplateID.ValueString()),
-			TemplateVersionNumber: aws.Int64(plan.TemplateVersionNumber.ValueInt64()),
+			AliasName:             plan.AliasName.ValueStringPointer(),
+			AwsAccountId:          plan.AWSAccountID.ValueStringPointer(),
+			TemplateId:            plan.TemplateID.ValueStringPointer(),
+			TemplateVersionNumber: plan.TemplateVersionNumber.ValueInt64Pointer(),
 		}
 
 		out, err := conn.UpdateTemplateAliasWithContext(ctx, in)
@@ -211,9 +211,9 @@ func (r *resourceTemplateAlias) Delete(ctx context.Context, req resource.DeleteR
 	}
 
 	in := &quicksight.DeleteTemplateAliasInput{
-		AliasName:    aws.String(state.AliasName.ValueString()),
-		AwsAccountId: aws.String(state.AWSAccountID.ValueString()),
-		TemplateId:   aws.String(state.TemplateID.ValueString()),
+		AliasName:    state.AliasName.ValueStringPointer(),
+		AwsAccountId: state.AWSAccountID.ValueStringPointer(),
+		TemplateId:   state.TemplateID.ValueStringPointer(),
 	}
 
 	_, err := conn.DeleteTemplateAliasWithContext(ctx, in)

@@ -84,10 +84,10 @@ func (d *dataSourceSearch) Read(ctx context.Context, req datasource.ReadRequest,
 	}
 
 	input := &resourceexplorer2.SearchInput{
-		QueryString: aws.String(data.QueryString.ValueString()),
+		QueryString: data.QueryString.ValueStringPointer(),
 	}
 	if !data.ViewArn.IsNull() {
-		input.ViewArn = aws.String(data.ViewArn.ValueString())
+		input.ViewArn = data.ViewArn.ValueStringPointer()
 	}
 
 	paginator := resourceexplorer2.NewSearchPaginator(conn, input)

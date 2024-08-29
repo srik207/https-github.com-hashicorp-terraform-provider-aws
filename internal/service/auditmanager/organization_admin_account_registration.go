@@ -64,7 +64,7 @@ func (r *resourceOrganizationAdminAccountRegistration) Create(ctx context.Contex
 	}
 
 	in := auditmanager.RegisterOrganizationAdminAccountInput{
-		AdminAccountId: aws.String(plan.AdminAccountID.ValueString()),
+		AdminAccountId: plan.AdminAccountID.ValueStringPointer(),
 	}
 	out, err := conn.RegisterOrganizationAdminAccount(ctx, &in)
 	if err != nil {
@@ -125,7 +125,7 @@ func (r *resourceOrganizationAdminAccountRegistration) Delete(ctx context.Contex
 	}
 
 	_, err := conn.DeregisterOrganizationAdminAccount(ctx, &auditmanager.DeregisterOrganizationAdminAccountInput{
-		AdminAccountId: aws.String(state.AdminAccountID.ValueString()),
+		AdminAccountId: state.AdminAccountID.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError(

@@ -80,7 +80,7 @@ func (d *dataSourceProducerDataShares) Read(ctx context.Context, req datasource.
 	data.ID = types.StringValue(data.ProducerARN.ValueString())
 
 	input := &redshift.DescribeDataSharesForProducerInput{
-		ProducerArn: aws.String(data.ProducerARN.ValueString()),
+		ProducerArn: data.ProducerARN.ValueStringPointer(),
 	}
 	if !data.Status.IsNull() {
 		input.Status = awstypes.DataShareStatusForProducer(data.Status.ValueString())

@@ -242,8 +242,8 @@ func (r *resourceRefreshSchedule) Create(ctx context.Context, req resource.Creat
 	}
 
 	in := quicksight.CreateRefreshScheduleInput{
-		AwsAccountId: aws.String(plan.AWSAccountID.ValueString()),
-		DataSetId:    aws.String(plan.DataSetID.ValueString()),
+		AwsAccountId: plan.AWSAccountID.ValueStringPointer(),
+		DataSetId:    plan.DataSetID.ValueStringPointer(),
 		Schedule:     scheduleInput,
 	}
 
@@ -320,8 +320,8 @@ func (r *resourceRefreshSchedule) Update(ctx context.Context, req resource.Updat
 		}
 
 		in := quicksight.UpdateRefreshScheduleInput{
-			AwsAccountId: aws.String(plan.AWSAccountID.ValueString()),
-			DataSetId:    aws.String(plan.DataSetID.ValueString()),
+			AwsAccountId: plan.AWSAccountID.ValueStringPointer(),
+			DataSetId:    plan.DataSetID.ValueStringPointer(),
 			Schedule:     scheduleInput,
 		}
 
@@ -390,7 +390,7 @@ func (r *resourceRefreshSchedule) Delete(ctx context.Context, req resource.Delet
 		return
 	}
 	_, err = conn.DeleteRefreshScheduleWithContext(ctx, &quicksight.DeleteRefreshScheduleInput{
-		AwsAccountId: aws.String(state.AWSAccountID.ValueString()),
+		AwsAccountId: state.AWSAccountID.ValueStringPointer(),
 		DataSetId:    aws.String(dataSetID),
 		ScheduleId:   aws.String(scheduleID),
 	})
@@ -524,7 +524,7 @@ func expandSchedule(ctx context.Context, scheduleId string, plan resourceRefresh
 	tfObj := tfList[0]
 	in := &quicksight.RefreshSchedule{
 		ScheduleId:  aws.String(scheduleId),
-		RefreshType: aws.String(tfObj.RefreshType.ValueString()),
+		RefreshType: tfObj.RefreshType.ValueStringPointer(),
 	}
 
 	if !tfObj.StartAfterDateTime.IsUnknown() {
@@ -551,9 +551,9 @@ func expandRefreshFrequency(ctx context.Context, plan scheduleData) (*quicksight
 
 	tfObj := tfList[0]
 	freq := &quicksight.RefreshFrequency{
-		Interval:     aws.String(tfObj.Interval.ValueString()),
-		TimeOfTheDay: aws.String(tfObj.TimeOfTheDay.ValueString()),
-		Timezone:     aws.String(tfObj.Timezone.ValueString()),
+		Interval:     tfObj.Interval.ValueStringPointer(),
+		TimeOfTheDay: tfObj.TimeOfTheDay.ValueStringPointer(),
+		Timezone:     tfObj.Timezone.ValueStringPointer(),
 	}
 
 	if !tfObj.RefreshOnDay.IsNull() {
@@ -578,10 +578,10 @@ func expandRefreshOnDayData(ctx context.Context, plan refreshFrequencyData) (*qu
 	tfObj := tfList[0]
 	entity := &quicksight.ScheduleRefreshOnEntity{}
 	if !tfObj.DayOfMonth.IsNull() {
-		entity.DayOfMonth = aws.String(tfObj.DayOfMonth.ValueString())
+		entity.DayOfMonth = tfObj.DayOfMonth.ValueStringPointer()
 	}
 	if !tfObj.DayOfWeek.IsNull() {
-		entity.DayOfWeek = aws.String(tfObj.DayOfWeek.ValueString())
+		entity.DayOfWeek = tfObj.DayOfWeek.ValueStringPointer()
 	}
 	return entity, diags
 }

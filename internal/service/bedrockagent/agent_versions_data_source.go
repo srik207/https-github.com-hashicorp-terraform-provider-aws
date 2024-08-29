@@ -99,7 +99,7 @@ func (d *dataSourceAgentVersions) Read(ctx context.Context, req datasource.ReadR
 	}
 
 	paginator := bedrockagent.NewListAgentVersionsPaginator(conn, &bedrockagent.ListAgentVersionsInput{
-		AgentId: aws.String(data.AgentID.ValueString()),
+		AgentId: data.AgentID.ValueStringPointer(),
 	})
 
 	var out bedrockagent.ListAgentVersionsOutput
