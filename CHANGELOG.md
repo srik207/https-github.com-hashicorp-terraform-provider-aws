@@ -1,4 +1,18 @@
 ## 5.66.0 (Unreleased)
+
+FEATURES:
+
+* **New Resource:** `aws_datazone_environment` ([#38811](https://github.com/hashicorp/terraform-provider-aws/issues/38811))
+
+ENHANCEMENTS:
+
+* resource/aws_datazone_domain: Add `skip_deletion_protection` attribute ([#38811](https://github.com/hashicorp/terraform-provider-aws/issues/38811))
+* resource/aws_sagemaker_endpoint: Increase Create and Update `InService` timeouts to 60 minutes ([#39090](https://github.com/hashicorp/terraform-provider-aws/issues/39090))
+
+BUG FIXES:
+
+* resource/aws_appconfig_extension: Make `role_arn` attribute optional ([#38900](https://github.com/hashicorp/terraform-provider-aws/issues/38900))
+
 ## 5.65.0 (August 29, 2024)
 
 NOTES:
