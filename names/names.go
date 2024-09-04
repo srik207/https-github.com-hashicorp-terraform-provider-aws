@@ -67,6 +67,7 @@ const (
 	ConnectEndpointID                      = "connect"
 	DataExchangeEndpointID                 = "dataexchange"
 	DataPipelineEndpointID                 = "datapipeline"
+	DataZoneEndpointID                     = "datazone"
 	DetectiveEndpointID                    = "api.detective"
 	DeviceFarmEndpointID                   = "devicefarm"
 	DevOpsGuruEndpointID                   = "devops-guru"
@@ -91,7 +92,9 @@ const (
 	IVSEndpointID                          = "ivs"
 	IVSChatEndpointID                      = "ivschat"
 	IdentityStoreEndpointID                = "identitystore"
+	ImageBuilderEndpointID                 = "imagebuilder"
 	Inspector2EndpointID                   = "inspector2"
+	InternetMonitorEndpointID              = "internetmonitor"
 	KMSEndpointID                          = "kms"
 	KafkaConnectEndpointID                 = "kafkaconnect"
 	KendraEndpointID                       = "kendra"
@@ -139,7 +142,6 @@ const (
 	VerifiedPermissionsEndpointID          = "verifiedpermissions"
 	WAFEndpointID                          = "waf"
 	WAFRegionalEndpointID                  = "waf-regional"
-	DataZoneEndpointID                     = "datazone"
 )
 
 // These should move to aws-sdk-go-base.
