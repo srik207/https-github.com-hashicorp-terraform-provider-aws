@@ -214,6 +214,35 @@ diags := flex.Expand(ctx, source, &target, flex.WithNoIgnoredFieldNames())
 
 AutoFlex is able to convert single-element lists from Terraform blocks into single struct or pointer values in AWS API structs.
 
+#### Customizing Struct Field Flexing
+
+The flexing of individual struct fields can be customized by using Go struct tags, with the namespace `autoflex`.
+
+Tag values are comma-separated lists of options, with a leading comma.
+
+The option `omitempty` can be used with `string` values to store a `null` value when an empty string is returned.
+
+For example, from the struct `refreshOnDayModel` for the QuickSight Refresh Schedule:
+
+```go
+type refreshOnDayModel struct {
+	DayOfMonth types.String `tfsdk:"day_of_month"`
+	DayOfWeek  types.String `tfsdk:"day_of_week" autoflex:",omitempty"`
+}
+```
+
+To completely ignore a field, use the tag value `-`.
+
+For example, from the struct `scheduleModel` for the QuickSight Refresh Schedule:
+
+```go
+type scheduleModel struct {
+	RefreshType        types.String                                           `tfsdk:"refresh_type"`
+	ScheduleFrequency  fwtypes.ListNestedObjectValueOf[refreshFrequencyModel] `tfsdk:"schedule_frequency"`
+	StartAfterDateTime types.String                                           `tfsdk:"start_after_date_time" autoflex:"-"`
+}
+```
+
 #### Overriding Default Behavior
 
 In some cases, flattening and expanding need conditional handling.
